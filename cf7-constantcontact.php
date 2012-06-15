@@ -1,0 +1,387 @@
+<?php
+/*
+Plugin Name: Contact Form 7 - Constant Contact Module
+Plugin URI: http://www.katzwebservices.com
+Description: Add the power of Constant Contact to Contact Form 7
+Author: Katz Web Services, Inc.
+Author URI: http://www.katzwebservices.com
+Version: 1.0
+*/
+
+/*  Copyright 2012 Katz Web Services, Inc. (email: info@katzwebservices.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+class CTCTCF7 { 
+	
+	function __construct() {
+		
+		add_action('admin_init', array('CTCTCF7', 'settings_init'));
+		add_action('admin_head', array('CTCTCF7', 'admin_head'));
+		add_filter('plugin_action_links', array('CTCTCF7', 'plugins_action_links'), 10, 2 );
+		add_action('admin_menu', array('CTCTCF7', 'admin_menu'));
+		add_action('wpcf7_after_save', array('CTCTCF7', 'save_form_settings'));
+		add_action('wpcf7_admin_before_subsubsub', array('CTCTCF7', 'add_meta_box' ));
+		add_action('wpcf7_admin_after_mail_2', array('CTCTCF7', 'show_ctct_metabox' ));
+		
+		// CF7 Processing
+		add_action( 'wpcf7_before_send_mail', array('CTCTCF7', 'process_submission' ));
+	}
+	
+	function admin_head() {
+		global $plugin_page;
+		
+		if($plugin_page === 'ctct_cf7') { wp_enqueue_script('thickbox'); }
+		
+		if($plugin_page !== 'wpcf7') { return; }
+		
+		?>
+		<script type="text/javascript">
+		
+		jQuery(document).ready(function($) {
+			$('#wpcf7-ctct-active').change(function() {
+				if($(this).is(':checked')) {
+					$('#wpcf7-ctct-all-fields').show();
+				} else {
+					$('#wpcf7-ctct-all-fields').hide();
+				}
+			}).trigger('change');			
+		});
+	</script>
+	<?php 
+	}
+	
+	function plugins_action_links( $links, $file ) {
+		if ( $file != plugin_basename( __FILE__ ) )
+			return $links;
+
+		$settings_link = '<a href="' . admin_url('admin.php?page=ctct_cf7') . '">' . esc_html( __( 'Settings', 'wpcf7' ) ) . '</a>';
+	
+		array_unshift( $links, $settings_link );
+	
+		return $links;
+
+	}
+	
+	function get_includes() {
+		if(!class_exists("Utility")) { require_once("api/ctctWrapper.php"); }
+		if(!class_exists("CTCT_SuperClass")) { require_once("api/ctct_cf7_superclass.php"); }
+	}
+
+	
+	private static function validateApi() {
+		$utility = new Utility();
+		$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?email=' . urlencode('asdasdasdasdsadsadasdas@asdmgmsdfdaf.com'));
+		return $return['info']['http_code'] === 200 && empty($return['error']);
+	}
+	
+	function get_password() {
+		if(isset($_POST['ctct_cf7'])) { return $_POST['ctct_cf7']['password']; }
+		$settings = get_option('ctct_cf7');
+		$value = !empty($settings['password']) ? $settings['password'] : NULL;
+		return $value;
+	}
+	
+	function get_username() {
+		if(isset($_POST['ctct_cf7'])) { return $_POST['ctct_cf7']['username']; }
+		$settings = get_option('ctct_cf7');
+		$value = !empty($settings['username']) ? $settings['username'] : NULL;
+		return $value;
+	}
+	
+	function admin_menu() {
+		add_submenu_page( 'wpcf7', __('Constant Contact Contact Form 7 Settings'), __('Constant Contact'), 'manage_options', 'ctct_cf7', array('CTCTCF7', 'settings_page'));
+	}
+	
+	function settings_init() {
+		
+		self::get_includes();
+		
+		register_setting('ctct_cf7', 'ctct_cf7');
+		
+		add_settings_section(
+			'ctct_api',
+			__('Configure your Constant Contact account settings.'),
+			array('CTCTCF7', 'setting_description'),
+			'ctct_cf7'
+		);
+		add_settings_field(
+			'ctct_cf7_username',
+			__('Constant Contact Username'),
+			array('CTCTCF7', 'setting_input_username'),
+			'ctct_cf7',
+			'ctct_api'
+		);
+		add_settings_field(
+			'ctct_cf7_password',
+			__('Constant Contact Password'),
+			array('CTCTCF7', 'setting_input_password'),
+			'ctct_cf7',
+			'ctct_api'
+		);
+	}
+	
+	function setting_description() {
+		echo 'Enter the username and password you use to log in to Constant Contact.';
+	}
+	
+	function setting_input_username() {
+		echo '<input autocomplete="off" name="ctct_cf7[username]" id="ctct_cf7_username" type="text" value="'.self::get_username().'" class="text" />';
+	}
+	
+	function setting_input_password() {
+		echo '<input autocomplete="off" name="ctct_cf7[password]" id="ctct_cf7_password" type="password" value="'.self::get_password().'" class="password" />';
+	}
+	
+	/**
+	 * Check the status of a plugin.
+	 *
+	 * @param string $plugin Base plugin path from plugins directory.
+	 * @return int 1 if active; 2 if inactive; 0 if not installed
+	 */
+	function get_plugin_status($location = '') {
+	
+		$errors = validate_plugin($location);
+	
+		// Plugin is found
+		if(!is_wp_error($errors)) {
+			if(is_plugin_inactive($location)) {
+				return 2;
+			}
+			return 1;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	function settings_page() {
+		
+		?>
+	<div class="wrap">
+		<img src="<?php echo plugins_url('CTCT_horizontal_logo.png', __FILE__); ?>" width="281" height="47" alt="Constant Contact" style="margin-top:1em;" />
+		<h2 style="padding-top:0;margin-bottom:.5em;"><?php _e('Contact Form 7 Module'); ?></h2>
+		<form action="options.php" method="post">
+			<?php 
+				$valid = self::validateApi();
+				
+				$message = '';
+				$status = self::get_plugin_status('contact-form-7/wp-contact-form-7.php');
+				switch($status) {
+					case 1: $message = false; break;
+					case 2: $message = 'Contact Form 7 is installed but inactive. Activate Contact Form 7 to use this plugin.'; break;
+					case 0: $message = 'Contact Form 7 is not installed. <a href="'.admin_url('plugin-install.php?tab=plugin-information&amp;plugin=contact-form-7&amp;TB_iframe=true&amp;width=600&amp;height=550').'" class="thickbox" title="Install Contact Form 7">Install the Contact Form 7 plugin</a> to use this plugin.'; break;
+				}
+				
+				if(!empty($message)) {
+					echo sprintf("<div id='message' class='error'><p>%s</p></div>", $message);
+				}
+				
+				if(is_null(self::get_password()) && is_null(self::get_username())) {
+					
+				} elseif($valid) {
+					echo "<div id='message' class='updated'><p>".__('Your username and password seem to be working.', 'constant-contact-api')."</p></div>";
+				} elseif(is_null(self::get_password())) {
+					echo "<div id='message' class='error'><p>".__('Your password is empty.', 'constant-contact-api')."</p></div>";				
+				} elseif(is_null(self::get_username())) {
+					echo "<div id='message' class='error'><p>".__('Your username is empty.', 'constant-contact-api')."</p></div>";
+				} else {
+					echo "<div id='message' class='error'><p>".__('Your username and password are not configured properly.', 'constant-contact-api')."</p></div>";
+				}
+				settings_fields('ctct_cf7');
+				do_settings_sections('ctct_cf7');
+			?>
+			<p class="submit"><input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit'); ?>" />
+		</form>
+	</div><!-- .wrap -->
+	<?php 
+	}
+	
+	function save_form_settings($args) {
+		update_option( 'cf7_ctct_'.$args->id, $_POST['wpcf7-ctct'] );
+	}
+	
+	function add_meta_box() {
+		if ( wpcf7_admin_has_edit_cap() ) {
+		add_meta_box( 'cf7ctctdiv', __( 'Constant Contact', 'ctctcf7' ),
+			array('CTCTCF7', 'metabox'), 'cfseven', 'cf7_ctct', 'core',
+			array(
+				'id' => 'ctctcf7',
+				'name' => 'cf7_ctct',
+				'use' => __( 'Use Constant Contact', 'ctctcf7' ) ) );
+		}
+	}
+	
+	function show_ctct_metabox($cf){
+		do_meta_boxes( 'cfseven', 'cf7_ctct', $cf );
+	}
+	
+	function metabox($args) {
+		$cf7_ctct_defaults = array();
+		$cf7_ctct = get_option( 'cf7_ctct_'.$args->id, $cf7_ctct_defaults );
+	?>
+	
+	<img src="<?php echo plugins_url('CTCT_horizontal_logo.png', __FILE__); ?>" width="281" height="47" alt="Constant Contact Logo" style="margin-top:.5em;" />
+			
+<?php if(self::validateApi()) { ?>
+<div class="mail-field clear" style="padding-bottom:.75em">
+	<input type="checkbox" id="wpcf7-ctct-active" name="wpcf7-ctct[active]" value="1"<?php echo ( $cf7_ctct['active']==1 ) ? ' checked="checked"' : ''; ?> />
+	<label for="wpcf7-ctct-active"><?php echo esc_html( __( 'Integrate Form With Constant Contact', 'wpcf7' ) ); ?></label>
+</div>
+	<?php } else { ?>
+<div class="mail-field clear">
+	<p class="error">The plugin's Constant Contact settings are not configured properly. <a href="<?php echo admin_url('admin.php?page=ctct_cf7'); ?>">Go configure them now.</a></p>
+</div>
+	<?php return; } ?>
+
+
+<div class="mail-fields clear" id="wpcf7-ctct-all-fields">
+
+	<div class="half-left">
+		<div class="mail-field">		
+			<label for="wpcf7-ctct-list"><strong><?php echo esc_html( __( 'Lists:', 'wpcf7' ) ); ?></strong></label><br />
+			<ul>
+			<?php 
+			$lists = CTCT_SuperClass:: getAvailableLists();
+			foreach($lists as $list) {
+				echo '<li><label for="wpcf7-ctct-list-'.$list['id'].'"><input type="checkbox" name="wpcf7-ctct[lists][]" id="wpcf7-ctct-list-'.$list['id'].'" value="'.$list['link'].'" '.checked(in_array($list['link'], (array)$cf7_ctct['lists']), true, false).' /> '.$list['name'].'</label></li>';
+			}
+			?>
+			</ul>
+			<a href="<?php echo add_query_arg(array('refresh' => rand(1,20000))); ?>#wpcf7-ctct-active">Refresh Lists</a>
+		</div>
+	</div>
+	
+	<div class="half-right">
+		<div class="mail-field">
+			<label for="wpcf7-ctct-accept"><?php echo esc_html( __( 'Opt-In Field:', 'wpcf7' ) ); ?> <span class="description">If the user should check a box to be added to the lists, enter the checkbox field here. Leave blank to have no required field.</span></label><br />
+			<input type="text" id="wpcf7-ctct-accept" name="wpcf7-ctct[accept]" placeholder="Example: [checkbox-456]" class="wide" size="70" value="<?php echo esc_attr( $cf7_ctct['accept'] ); ?>" />
+		</div>
+	</div>
+	
+	<div class="clear ctct-fields">
+		<?php 
+			$i = 0;
+			foreach(CTCT_SuperClass::listMergeVars() as $var) {
+		?>
+			<div class="half-<?php if($i % 2 === 0) { echo 'left'; } else { echo 'right'; }?>" style="clear:none;">
+				<div class="mail-field">
+				<label for="wpcf7-ctct-<?php echo $var['tag']; ?>"><?php echo $var['name']; ?></label><br />
+				<input type="text" id="wpcf7-ctct-<?php echo $var['tag']; ?>" name="wpcf7-ctct[fields][<?php echo $var['tag']; ?>]" class="wide" size="70" value="<?php echo esc_attr( $cf7_ctct['fields'][$var['tag']] ); ?>" <?php if(isset($var['placeholder'])) { echo ' placeholder="Example: '.$var['placeholder'].'"'; } ?> />
+				</div>
+			</div>
+			
+		<?php
+			if($i % 2 === 1) { echo '<div class="clear"></div>'; }
+			$i++;
+		 } ?>
+		
+	</div>
+	<div class="clear"></div>
+</div>
+<?php
+	}
+	
+
+	function process_submission($obj) {
+		$cf7_ctct = get_option( 'cf7_ctct_'.$obj->id );
+		if(empty($cf7_ctct)) { return $obj; }
+		
+		$subscribe = true;
+		
+		if(empty($cf7_ctct['fields']) || empty($cf7_ctct['lists'])) { return $obj; }
+		
+		@self::get_includes();
+		
+		// If it doesn't load for some reason....
+		if(!class_exists('CTCT_SuperClass')) { return; }
+		
+		foreach($cf7_ctct['fields'] as $key => $field) {
+			$value = self::tag_replace($field, $obj->posted_data);
+			$contact[$key] = $value;
+		}
+		
+		
+		if(!empty($cf7_ctct['accept'])) {
+			$accept = self::tag_replace($cf7_ctct['accept'], $obj->posted_data );
+			if(empty($accept)) { return $obj; }
+		}
+		
+		// For debug only
+#		$contact['email_address'] = rand(0,10000).$contact['email_address']; // REMOVE!!!!!
+		
+		// Define the lists to be added
+		$contact['lists'] = (array)$cf7_ctct['lists'];
+		
+		$Contact = CTCT_SuperClass::CC_Contact($contact);
+		
+		$contact_exists = CTCT_SuperClass::CC_ContactsCollection()->searchByEmail($contact['email_address']);
+
+		if(!$contact_exists) {
+			$expected_response = 201;
+			$response = CTCT_SuperClass::CC_ContactsCollection()->createContact($Contact);
+		} else {
+			$expected_response = 204;
+			$details = $contact_exists[0][0];
+			$contact_id = CTCT_SuperClass::getContactId(&$contact_exists[0][0]);
+			$Contact->setId($contact_exists[0][0]->getId());
+			$Contact->setLink($contact_exists[0][0]->getLink());
+			$response = CTCT_SuperClass::CC_ContactsCollection()->updateContact($contact_id, $Contact);
+		}
+
+		if((int)$response !== $expected_response) {
+			$failed = true;
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	function tag_replace($subject, $posted_data, $html = false, $pattern = '/\[\s*([a-zA-Z_][0-9a-zA-Z:._-]*)\s*\]/') {
+
+		if( preg_match($pattern,$subject,$matches) > 0)
+		{
+		
+			if ( isset( $posted_data[$matches[1]] ) ) {
+				$submitted = $posted_data[$matches[1]];
+		
+				if ( is_array( $submitted ) )
+					$replaced = join( ', ', $submitted );
+				else
+					$replaced = $submitted;
+		
+				if ( $html ) {
+					$replaced = strip_tags( $replaced );
+					$replaced = wptexturize( $replaced );
+				}
+		
+				$replaced = apply_filters( 'wpcf7_mail_tag_replaced', $replaced, $submitted );
+		
+				return stripslashes( $replaced );
+			}
+		
+			if ( $special = apply_filters( 'wpcf7_special_mail_tags', '', $matches[1] ) )
+				return $special;
+		
+			return $matches[0];
+		}
+		return $subject;
+	}
+	
+}
+
+$CTCTCF7 = new CTCTCF7();

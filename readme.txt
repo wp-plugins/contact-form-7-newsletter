@@ -11,11 +11,11 @@ Easily integrate Constant Contact with the Contact Form 7 plugin.
 
 == Description ==
 
-## Add Submissions to Your Newsletter with Constant Contact
+### Add Submissions to Your Newsletter with Constant Contact
 
 Automatically add contact form submissions to Constant Contact lists that you choose! The plugin settings are configured on a per-form basis on the Contact Form 7 form configuration pages.
 
-### Features
+#### Features
 * Add contacts to multiple lists at once
 * Sync form fields to Constant Contact fields, including your Custom Fields
 * Add a newsletter opt-in checkbox to your form (see plugin FAQs to learn how)

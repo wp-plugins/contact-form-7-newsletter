@@ -1,4 +1,4 @@
-=== Contact Form 7 - Constant Contact Module ===
+=== Contact Form 7 & Constant Contact ===
 Contributors: katzwebdesign
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
@@ -10,6 +10,8 @@ License: GPLv2 or later
 Easily integrate Constant Contact with the Contact Form 7 plugin.
 
 == Description ==
+
+## Add Submissions to Your Newsletter with Constant Contact
 
 Automatically add contact form submissions to Constant Contact lists that you choose! The plugin settings are configured on a per-form basis on the Contact Form 7 form configuration pages.
 

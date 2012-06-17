@@ -170,7 +170,7 @@ class CTCTCF7 {
 	
 	function settings_page() {
 		
-		?>
+?>
 	<div class="wrap">
 		<img src="<?php echo plugins_url('CTCT_horizontal_logo.png', __FILE__); ?>" width="281" height="47" alt="Constant Contact" style="margin-top:1em;" />
 		<h2 style="padding-top:0;margin-bottom:.5em;"><?php _e('Contact Form 7 Module'); ?></h2>
@@ -191,7 +191,7 @@ class CTCTCF7 {
 				}
 				
 				if(is_null(self::get_password()) && is_null(self::get_username())) {
-					
+					self::show_signup_message();
 				} elseif($valid) {
 					echo "<div id='message' class='updated'><p>".__('Your username and password seem to be working.', 'constant-contact-api')."</p></div>";
 				} elseif(is_null(self::get_password())) {
@@ -207,6 +207,56 @@ class CTCTCF7 {
 			<p class="submit"><input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit'); ?>" />
 		</form>
 	</div><!-- .wrap -->
+	<?php 
+	}
+	
+	function show_signup_message() {
+		?>
+		<style type="text/css">
+		.get-em,
+		#grow-with-email,
+		a#free_trial {
+			display:block;
+			text-indent:-9999px;
+			overflow:hidden;
+			float:left;
+		}
+		a#free_trial:hover {
+			background-position: 0px -102px;
+		}	
+		#grow-with-email {
+			background-image: url(http://img.constantcontact.com/lp/images/standard/bv2/product_pages/test/grow_with_email_text.png);
+		}	
+		#grow-with-email,
+		#grow-with-email a {
+			display: block;
+			border: none;
+			outline: none;
+			height: 91px;
+			width: 720px;
+		}
+		.get-em {
+			float: left;
+			clear: left;
+			width: 201px;
+			height: 81px;
+			background: url('http://img.constantcontact.com/lp/images/standard/bv2/product_pages/test/btn_get_email_white.png') left top no-repeat;
+		}
+		.get-em:hover { background-position: left bottom; }
+		.learn-more { margin-left: 15px!important; }
+		#enter-account-details {
+			width:100%; border-top:1px solid #ccc; margin-top:1em; padding-top:.5em;
+		}
+	</style>
+	<div style="clear:left; float:left;">		
+		<h2 class="clear" style="font-size:23px; color: #555;"><strong>Hello!</strong> This plugin requires <a href="http://katz.si/4i" title="Learn more about Constant Contact">a Constant Contact account</a>.</h2>
+		<p id="grow-with-email"><a href="http://katz.si/4i"><strong>Grow with Email Marketing. Guaranteed.</strong> With Email Marketing, it's easy for you to connect with your customers, and for customers to share your message with their networks. And the more customers spread the word about your business, the more you grow</a></p>
+		<p><a class="get-em" href="http://katz.si/4w">Start Your Free Trial</a></p>
+		<h2 class="learn-more alignleft"> or <a href="http://katz.si/4i">Learn More</a></h2>
+		<div class="clear"></div>
+	</div>
+
+	<h2 class="clear" id="enter-account-details">Enter your account details below:</h2>
 	<?php 
 	}
 	

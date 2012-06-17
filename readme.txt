@@ -4,7 +4,7 @@ Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackka
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
 Requires at least: 3.2
 Tested up to: 3.4
-Stable tag: 1.0
+Stable tag: trunk
 License: GPLv2 or later
 
 Easily integrate Constant Contact with the Contact Form 7 plugin.

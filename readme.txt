@@ -1,5 +1,5 @@
 === Contact Form 7 - Constant Contact Module ===
-Contributors: katzwebservices
+Contributors: katzwebservices, katzwebdesign
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
 Requires at least: 3.2
@@ -53,9 +53,15 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.
+* Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
+* Fixed issue where forms were being sent to Constant Contact, even when integration checkbox was unchecked, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-all-forms-are-connected-to-constant-contact">as reported here</a>
 
 = 1.0.2 =
 * Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
 
 = 1.0.1 =
 * Improved documentation: there is now inline help when setting up form integration.
@@ -68,6 +74,10 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.
+* Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
+* Fixed issue where forms were being sent to Constant Contact, even when integration checkbox was unchecked, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-all-forms-are-connected-to-constant-contact">as reported here</a>
 
 = 1.0.2 =
 * Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>

@@ -388,7 +388,7 @@ Work Phone: [text work-phone]</pre>
 		
 		$subscribe = true;
 		
-		if(empty($cf7_ctct['fields']) || empty($cf7_ctct['lists'])) { return $obj; }
+		if(empty($cf7_ctct['active']) || empty($cf7_ctct['fields']) || empty($cf7_ctct['lists'])) { return $obj; }
 		
 		@self::get_includes();
 		

@@ -1,6 +1,6 @@
 <?php 
 
-class CTCT_SuperClass extends Utility {
+class CTCT_SuperClass extends CTCTUtility {
 	
 	function __construct($user = null, $password=null) {
 		self::updateSettings($this);
@@ -54,31 +54,31 @@ class CTCT_SuperClass extends Utility {
 	}
 	
 	public function CC_Campaign() {
-		$CC_Campaign = new Campaign();
+		$CC_Campaign = new CTCTCampaign();
 		self::updateSettings($CC_Campaign);
 		return $CC_Campaign;
 	}
 	
 	public function CC_ContactsCollection() {
-		$CC_ContactsCollection = new ContactsCollection();
+		$CC_ContactsCollection = new CTCTContactsCollection();
 		self::updateSettings($CC_ContactsCollection);
 		return $CC_ContactsCollection;
 	}
 	
 	public function CC_Utility() {
-		$CC_Utility = new Utility();
+		$CC_Utility = new CTCTUtility();
 		self::updateSettings($CC_Utility);
 		return $CC_Utility;
 	}
 	
 	public function CC_Contact($params = array()) {
-		$CC_Contact = new Contact($params);
+		$CC_Contact = new CTCTContact($params);
 		self::updateSettings($CC_Contact);
 		return $CC_Contact;
 	}
 	
 	public function CC_ListsCollection() {
-		$CC_ListsCollection = new ListsCollection();
+		$CC_ListsCollection = new CTCTListsCollection();
 		self::updateSettings($CC_ListsCollection);
 		return $CC_ListsCollection;
 	}

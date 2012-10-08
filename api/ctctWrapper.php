@@ -24,7 +24,7 @@
 	 * Also used to make Bulk URL encoded calls and Multi Part Form calls
 	 *
 	 */
-	class Utility
+	class CTCTUtility
 	{
 		/**
 		 * Public Function __construct of Utility Object
@@ -204,7 +204,7 @@
 	 * creating a bulk import with Multipart/form data and bulk url encoded calls, also bulk export
 	 * 
 	 */
-	class ActivitiesCollection
+	class CTCTActivitiesCollection
 	{
 		/**
 		* Public function that Gets a list of first 50 Activities in the account
@@ -213,7 +213,7 @@
 		*/
 		public function listActivities()
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/activities');
 			$allActivities = array();
 			
@@ -224,7 +224,7 @@
 			
 			foreach ($parsedReturn->entry as $item)
 			{
-				$activity = new Activity();
+				$activity = new CTCTActivity();
 				$activity->setLink($item->link['href']);
 				$activity->setId($item->id);
 				$activity->setActivityTitle($item->content->title);
@@ -256,7 +256,7 @@
 		*/
 		public function listActivityDetails($activity)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $activity->getLink();
 			$return = $utility->httpGet($call);
 			$activity = $this->createActivityStruct($return['xml']);
@@ -279,7 +279,7 @@
 		*/
 		public function bulkUrlEncoded($urlEncodedPost)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/' . $utility->getLogin() .'/activities';
 			$return = $utility->urlEncodedPost($call, $urlEncodedPost);
 			$code = $return['info']['http_code'];
@@ -299,7 +299,7 @@
 		*/
 		public function exportContacts($filetype, $list, $exportOptDate, $exportOptSource, $exportListName, $sortBy, $columns = array())
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/' . $utility->getLogin() .'/activities';
 
 			foreach ($columns as $item)
@@ -322,7 +322,7 @@
 		*/
 		public function multiPart($fileArray)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/' . $utility->getLogin() .'/activities';
 			$return = $utility->multiPartPost($call, $fileArray);
 			$code = $return['info']['http_code'];
@@ -359,7 +359,7 @@
 				}
 			}
 			
-			$activityObj = new Activity($activity);
+			$activityObj = new CTCTActivity($activity);
 			return $activityObj;
 		}
 	}
@@ -370,7 +370,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class Activity
+	class CTCTActivity
 	{
 		/**
 		* Construct function for the Activity Class
@@ -461,7 +461,7 @@
 	 * Includes functions to create folders, list folders, list images and delete images and folders
 	 * 
 	 */
-	class LibraryCollection
+	class CTCTLibraryCollection
 	{
 		/**
 		* Public function that gets a list of first 50 folders in the account
@@ -470,7 +470,7 @@
 		*/
 		public function listFolders()
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/library/folders');
 			$allFolders = array();
 
@@ -481,7 +481,7 @@
 
 			foreach ($parsedReturn->entry as $item)
 			{
-				$folder = new Folder();
+				$folder = new CTCTFolder();
 				$folder->setFolderLink($item->link->Attributes()->href);  
 				$folder->setFolderId($item->id);
 				$folder->setFolderName($item->title);
@@ -505,7 +505,7 @@
 		*/
 		public function createFolder($folder)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/library/folders';
 			$folderStruct = $this->createFolderXml($folder);
 			$return = $utility->httpPost($call, $folderStruct);
@@ -519,7 +519,7 @@
 		*/
 		public function listImages($folder)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . $folder->getFolderLink() . '/images');
 			$allImages = array();
 			$imageArray = array();
@@ -534,7 +534,7 @@
 				$imageArray['file_name'] = $item->title;
 				$imageArray['last_updated']  = $item->updated;
 				$imageArray['file_type'] = $item->content->Image->FileType;
-				$image = new Image($imageArray);
+				$image = new CTCTImage($imageArray);
 				$imageList[] = $image;
 			}
 			
@@ -555,7 +555,7 @@
 		*/
 		public function listImageDetails($image)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $image->getLink();
 			$return = $utility->httpGet($call);
 			$imageStruct = $this->createImageStruct($return['xml']);
@@ -576,7 +576,7 @@
 		*/
 		public function deleteImage($image)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $image->getLink();
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
@@ -590,7 +590,7 @@
 		*/
 		public function clearFolder($folder)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $folder->getFolderLink() . '/images';
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
@@ -604,7 +604,7 @@
 		*/
 		private function createFolderXml($folder)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$xml = simplexml_load_string("<?xml version='1.0' encoding='UTF-8' standalone='yes'?><atom:entry xmlns:atom='http://www.w3.org/2005/Atom'/>");
 			$content = $xml->addChild("content");
 			$folderNode = $content->addChild("Folder", "", "");
@@ -625,7 +625,7 @@
 			$folder['folderLink'] = ($parsedReturn->link);
 			$folder['folderId'] = ($parsedReturn->id);
 			$folder['folderName'] = ($parsedReturn->content->Folder->Name);
-			$folderStruct = new Folder($folder);
+			$folderStruct =  ($folder);
 			return $folderStruct;
 		}
 		/**
@@ -658,7 +658,7 @@
 				}
 			}
 			
-			$imageStruct = new Image($image);
+			$imageStruct = new CTCTImage($image);
 			return $imageStruct;
 			
 		}
@@ -671,7 +671,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class Folder
+	class CTCTFolder
 	{
 		/**
 		* Construct function for the Folder Class
@@ -708,7 +708,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class Image
+	class CTCTImage
 	{
 		/**
 		* Construct function for the Image Class
@@ -792,7 +792,7 @@
 	 * also creating, removing, and sending contacts to do not mail.
 	 * 
 	 */
-	class ContactsCollection
+	class CTCTContactsCollection
 	{
 		/**
 		* Public function that does a POST to the Contacts collection, passing a contact object
@@ -802,7 +802,7 @@
 		*/
 		public function createContact($contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts';
 			$contactStruct = $this->createContactXml(null, $contact);
 			$return = $utility->httpPost($call, $contactStruct);
@@ -817,7 +817,7 @@
 		*/
 		public function deleteContact($contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $contact->getLink();
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
@@ -831,7 +831,7 @@
 		*/
 		public function listContactDetails($contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $contact->getLink();
 			$return = $utility->httpGet($call);
 			$contact = $this->createContactStruct($return['xml']);
@@ -851,7 +851,7 @@
 		*/
 		public function listContacts()
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts');
 			$allContacts = array();
 			
@@ -862,7 +862,7 @@
 			
 			foreach ($parsedReturn->entry as $item)
 			{
-				$contact = new Contact();
+				$contact = new CTCTContact();
 				$contact->setLink($item->link['href']);
 				$contact->setId($item->id);
 				$contact->setEmailAddress($item->content->Contact->EmailAddress);
@@ -890,7 +890,7 @@
 		*/
 		public function listContactEvents($contact, $type)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			switch ($type)
 			{
 				case 'opens':
@@ -964,7 +964,7 @@
 		*/
 		public function removeContact($contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$existingContact = $this->listContactDetails($contact);
 			$existingContact->removeLists();
 			
@@ -981,7 +981,7 @@
 		*/
 		public function searchByEmail($emailAddress)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?email=' . urlencode($emailAddress));
 			$parsedReturn = simplexml_load_string($return['xml']);
 			
@@ -998,7 +998,7 @@
 		
 			foreach ($parsedReturn->entry as $item)
 			{
-				$contact = new Contact();
+				$contact = new CTCTContact();
 				$contact->setLink($item->link->Attributes()->href);
 				$contact->setId($item->id);
 				$contact->setEmailAddress($item->content->Contact->EmailAddress);
@@ -1027,7 +1027,7 @@
 		*/
 		public function syncContacts($date, $syncType, $list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?updatedsince=' . $date . '&' . $syncType . '=' . $list);
 			$parsedReturn = simplexml_load_string($return['xml']);
 			
@@ -1040,7 +1040,7 @@
 			
 			foreach ($parsedReturn->entry as $item)
 			{
-				$contact = new Contact();
+				$contact = new CTCTContact();
 				$contact->setLink($item->link->Attributes()->href);
 				$contact->setId($item->id);
 				$contact->setEmailAddress($item->content->Contact->EmailAddress);
@@ -1067,7 +1067,7 @@
 		*/
 		public function updateContact($contactId, $contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$existingContact = $this->listContactDetails($contact);
 			$contactXml = $this->createContactXml($existingContact->getId(), $contact);
 			$return = $utility->httpPut($utility->getApiPath() . $existingContact->getLink(), $contactXml);
@@ -1130,7 +1130,7 @@
 				}
 			}
 			
-			$contact = new Contact($fullContact);
+			$contact = new CTCTContact($fullContact);
 			return $contact;
 		}
 		/**
@@ -1142,7 +1142,7 @@
 		*/
 		private	function createContactXml($id, $contact)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 
 			if ( empty($id)) {
 				$id = "urn:uuid:E8553C09F4xcvxCCC53F481214230867087";
@@ -1223,7 +1223,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class Contact
+	class CTCTContact
 	{
 		/**
 		* Construct function for the Contact Class
@@ -1233,7 +1233,7 @@
 		*/
 		public function __construct($params = array())
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			if ($params['status'] == 'Do Not Mail')
 			{
 				$utility->setActionBy('ACTION_BY_CONTACT');
@@ -1490,7 +1490,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-		class Campaign
+		class CTCTCampaign
 	{
 		/**
 		* Construct function for the Campaign Class
@@ -1764,7 +1764,7 @@
 	 * also creating and deleting campaigns
 	 * 
 	 */
-	class CampaignsCollection
+	class CTCTCampaignsCollection
 	{
 		/**
 		* Public function that does a POST to the Campaigns collection, passing a campaign object
@@ -1774,7 +1774,7 @@
 		*/
 		public function createCampaign($campaign)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/campaigns';
 			$campaignXml = $this->createCampaignXml(null, $campaign);
 			$return = $utility->httpPost($call, $campaignXml);
@@ -1789,7 +1789,7 @@
 		*/
 		public function deleteCampaign($campaign)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $campaign->getLink();
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
@@ -1803,7 +1803,7 @@
 		*/
 		public function listCampaignDetails($campaignObj)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $campaignObj->getLink();
 			$return = $utility->httpGet($call);
 			$campaign = $this->createCampaignStruct($return['xml']);
@@ -1823,7 +1823,7 @@
 		*/
 		public function listCampaigns()
 		{	
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/campaigns');
 			
 			$allCampaigns = array();
@@ -1834,7 +1834,7 @@
 			
 			foreach ($parsedReturn->entry as $item)
 			{
-				$campaign = new Campaign();
+				$campaign = new CTCTCampaign();
 				$campaign->setLink($item->link['href']);
 				$campaign->setId($item->id);
 				$campaign->setCampaignName($item->content->Campaign->Name);
@@ -1860,7 +1860,7 @@
 		*/
 		public function searchCampaigns($status)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/campaigns?status=' . $status);
 			$parsedReturn = simplexml_load_string($return['xml']);
 			
@@ -1878,7 +1878,7 @@
 			
 				foreach ($parsedReturn->entry as $item)
 				{
-					$campaign = new Campaign();
+					$campaign = new CTCTCampaign();
 					$campaign->setLink($item->link['href']);
 					$campaign->setId($item->id);
 					$campaign->setCampaignName($item->content->Campaign->Name);
@@ -1906,7 +1906,7 @@
 		*/
 		public function updateCampaign($campaign)
 		{	
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$existingCampaign = $this->listCampaignDetails($campaign);
 			$campaignXml = $this->createCampaignXml($existingCampaign->getId(), $campaign);
 			$return = $utility->httpPut($utility->getApiPath() . $existingCampaign->getLink(), $campaignXml);
@@ -1979,7 +1979,7 @@
 				}
 			}
 			
-			$campaignStruct = new Campaign($campaign);
+			$campaignStruct = new CTCTCampaign($campaign);
 			return $campaignStruct;
 		}
 		/**
@@ -1991,7 +1991,7 @@
 		*/
 		private function createCampaignXml($id, $campaign)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			
 			if (empty($id))
 			{
@@ -2103,7 +2103,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class ListObj
+	class CTCTListObj
 	{
 		/**
 		* Construct function for the List Class
@@ -2162,7 +2162,7 @@
 	 * Includes functions for listing lists, creating lists, and listing members in a list
 	 * 
 	 */
-	class ListsCollection
+	class CTCTListsCollection
 	{
 		/**
 		* Public function that does a POST to the Lists collection, passing a list object
@@ -2172,7 +2172,7 @@
 		*/
 		public function createList($list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/lists';
 			$listStruct = $this->createListXml(null, $list);
 			$return = $utility->httpPost($call, $listStruct);
@@ -2188,7 +2188,7 @@
 		*/
 		public function deleteList($list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $list->getLink();
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
@@ -2203,7 +2203,7 @@
 		*/
 		public function getListDetails($list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $list->getLink();
 			$return = $utility->httpGet($call);
 			$list = $this->createListStruct($return['xml']);
@@ -2224,7 +2224,7 @@
 		*/
 		public function getListMembers($list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $list->getLink() . '/members';
 			$return = $utility->httpGet($call);
 			$parsedReturn = simplexml_load_string($return['xml']);
@@ -2237,7 +2237,7 @@
 			
 			foreach ($parsedReturn->entry as $item)
 			{
-				$contact = new Contact();
+				$contact = new CTCTContact();
 				$contact->setLink($item->link->Attributes()->href);
 				$contact->setId($item->id);
 				$contact->setFullName($item->content->ContactListMember->Name);
@@ -2267,7 +2267,7 @@
 		*/
 		public function getLists()
 		{			
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/lists');
 			$allLists = array();
 			
@@ -2287,7 +2287,7 @@
 				$listArray['display_on_signup'] = ((string)$item->content->ContactList->DisplayOnSignup);
 				$listArray['sort_order'] = ((string)$item->content->ContactList->SortOrder);
 				$listArray['contact_count'] = ((string)$item->content->ContactList->ContactCount);
-				$list = new ListObj($listArray);
+				$list = new CTCTListObj($listArray);
 				$Lists[] = $list;
 			}
 
@@ -2308,7 +2308,7 @@
 		*/
 		public function updateList($listId, $list)
 		{	
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$existingList = $this->getListDetails($listId);
 			$listXml = $this->createListXml($existingList->getId(), $list);
 			$return = $utility->httpPut($utility->getApiPath() . $existingList->getLink(), $listXml);
@@ -2334,7 +2334,7 @@
 			$listArray['display_on_signup'] = ($parsedReturn->content->ContactList->DisplayOnSignup);
 			$listArray['sort_order'] = ($parsedReturn->content->ContactList->SortOrder);
 			$listArray['contact_count'] = ($parsedReturn->content->ContactList->ContactCount);
-			$list = new ListObj($listArray);
+			$list = new CTCTListObj($listArray);
 			return $list;
 		}
 		/**
@@ -2346,7 +2346,7 @@
 		*/
 		private function createListXml($id, $list)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 
 			if ( empty($id)) {
 				$id = "urn:uuid:E8553C09F4xcvxCCC53F481214230867087";
@@ -2381,7 +2381,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class VerifiedAddress
+	class CTCTVerifiedAddress
 	{
 		/**
 		* Construct function for the VerifiedAddress Class
@@ -2427,7 +2427,7 @@
 	 * Includes functions for listing all verified addresses in an account
 	 * 
 	 */
-	class SettingsCollection
+	class CTCTSettingsCollection
 	{
 		/**
 		* Public function that gets a list of first 50 verified addresses in the account
@@ -2436,7 +2436,7 @@
 		*/
 		public function listVerifiedAddresses()
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/settings/emailaddresses');
 			$allAddresses = array();
 			
@@ -2475,7 +2475,7 @@
 			$verifiedArray['verified_email_status'] = ($parsedXml->content->Email->Status);
 			$verifiedArray['verified_time'] = ($parsedXml->content->Email->VerifiedTime);
 
-			$verifiedAddress = new VerifiedAddress($verifiedArray);
+			$verifiedAddress = new CTCTVerifiedAddress($verifiedArray);
 			return $verifiedAddress;
 		}
 	}
@@ -2486,7 +2486,7 @@
 	 * getters and setters for variables
 	 * 
 	 */
-	class Event
+	class CTCTEvent
 	{
 		/**
 		* Construct function for the Event Class
@@ -2943,7 +2943,7 @@
 	 * also listing registrants and registrant details.
 	 * 
 	 */
-	class EventCollection
+	class CTCTEventCollection
 	{
 		/**
 		* Public function that gets a list of first 50 events in the account
@@ -2952,7 +2952,7 @@
 		*/
 		public function listEvents()
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/events');
 			$allEvents = array();
 			$eventArray = array();
@@ -2985,7 +2985,7 @@
 				$eventArray['event_state'] = ($item->content->Event->EventLocation->State);
 				$eventArray['event_country'] = ($item->content->Event->EventLocation->Country);
 				$eventArray['event_postalcode'] = ($item->content->Event->EventLocation->PostalCode);
-				$event = new Event($eventArray);
+				$event = new CTCTEvent($eventArray);
 				$eventList[] = $event;
 			}
 
@@ -3006,7 +3006,7 @@
 		*/
 		public function listEventDetails($event)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $event->getLink();
 			$return = $utility->httpGet($call);
 			$event = $this->createEventStruct($return['xml']);
@@ -3027,7 +3027,7 @@
 		*/
 		public function listEventRegistrants($event)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . $event->getLink() . '/registrants');
 			$allRegistrants = array();
 			$registrantArray = array();
@@ -3067,7 +3067,7 @@
 		*/
 		public function listRegistrantDetails($registrant)
 		{
-			$utility = new Utility();
+			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . $registrant->getLink();
 			$return = $utility->httpGet($call);
 			$registrant = $this->createRegistrantStruct($return['xml']);
@@ -3163,7 +3163,7 @@
 					$eventArray['event_fees']['event_fee' . $int]['FeeScope'] = (trim((string) $item->FeeScope));
 				}
 			}
-			$eventStruct = new Event($eventArray);
+			$eventStruct = new CTCTEvent($eventArray);
 			return $eventStruct;
 			
 		}

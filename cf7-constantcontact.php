@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 1.0.2
+Version: 1.0.3
 */
 
 /*  Copyright 2012 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -77,13 +77,13 @@ class CTCTCF7 {
 	}
 	
 	function get_includes() {
-		if(!class_exists("Utility")) { require_once("api/ctctWrapper.php"); }
+		if(!class_exists("CTCTUtility")) { require_once("api/ctctWrapper.php"); }
 		if(!class_exists("CTCT_SuperClass")) { require_once("api/ctct_cf7_superclass.php"); }
 	}
 
 	
 	private static function validateApi() {
-		$utility = new Utility();
+		$utility = new CTCTUtility();
 		$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?email=' . urlencode('asdasdasdasdsadsadasdas@asdmgmsdfdaf.com'));
 		return $return['info']['http_code'] === 200 && empty($return['error']);
 	}
@@ -365,7 +365,7 @@ Work Phone: [text work-phone]</pre>
 		?>
 			<div class="half-<?php if($i % 2 === 0) { echo 'left'; } else { echo 'right'; }?>" style="clear:none;">
 				<div class="mail-field">
-				<label for="wpcf7-ctct-<?php echo $var['tag']; ?>"><?php echo $var['name']; ?></label><br />
+				<label for="wpcf7-ctct-<?php echo $var['tag']; ?>"><?php echo $var['name']; echo !empty($var['req']) ? _e(' <strong>&larr; This setting is required.</strong>', 'wpcf7') : ''; ?></label><br />
 				<input type="text" id="wpcf7-ctct-<?php echo isset($var['tag']) ? $var['tag'] : ''; ?>" name="wpcf7-ctct[fields][<?php echo isset($var['tag']) ? $var['tag'] : ''; ?>]" class="wide" size="70" value="<?php echo @esc_attr( isset($cf7_ctct['fields'][$var['tag']]) ? $cf7_ctct['fields'][$var['tag']] : '' ); ?>" <?php if(isset($var['placeholder'])) { echo ' placeholder="Example: '.$var['placeholder'].'"'; } ?> />
 				</div>
 			</div>

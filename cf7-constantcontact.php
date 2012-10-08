@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 1.0.1
+Version: 1.0.2
 */
 
 /*  Copyright 2012 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -288,7 +288,7 @@ class CTCTCF7 {
 			
 <?php if(self::validateApi()) { ?>
 <div class="mail-field clear" style="padding-bottom:.75em">
-	<input type="checkbox" id="wpcf7-ctct-active" name="wpcf7-ctct[active]" value="1"<?php echo ( $cf7_ctct['active']==1 ) ? ' checked="checked"' : ''; ?> />
+	<input type="checkbox" id="wpcf7-ctct-active" name="wpcf7-ctct[active]" value="1"<?php checked((isset($cf7_ctct['active']) && $cf7_ctct['active']==1), true); ?> />
 	<label for="wpcf7-ctct-active"><?php echo esc_html( __( 'Integrate Form With Constant Contact', 'wpcf7' ) ); ?></label>
 </div>
 	<?php } else { ?>
@@ -307,7 +307,13 @@ class CTCTCF7 {
 			<?php 
 			$lists = CTCT_SuperClass::getAvailableLists();
 			foreach($lists as $list) {
-				echo '<li><label for="wpcf7-ctct-list-'.$list['id'].'"><input type="checkbox" name="wpcf7-ctct[lists][]" id="wpcf7-ctct-list-'.$list['id'].'" value="'.$list['link'].'" '.checked(in_array($list['link'], (array)$cf7_ctct['lists']), true, false).' /> '.$list['name'].'</label></li>';
+				echo '
+				<li>
+					<label for="wpcf7-ctct-list-'.$list['id'].'">
+						<input type="checkbox" name="wpcf7-ctct[lists][]" id="wpcf7-ctct-list-'.$list['id'].'" value="'.$list['link'].'" '.@checked((is_array($list) && in_array($list['link'], (array)$cf7_ctct['lists'])), true, false).' /> 
+					'.$list['name'].'
+					</label>
+				</li>';
 			}
 			?>
 			</ul>
@@ -318,7 +324,7 @@ class CTCTCF7 {
 	<div class="half-right">
 		<div class="mail-field">
 			<label for="wpcf7-ctct-accept"><?php echo esc_html( __( 'Opt-In Field:', 'wpcf7' ) ); ?> <span class="description"><?php _e('If the user should check a box to be added to the lists, enter the checkbox field here. Leave blank to have no required field.', 'wpcf7'); ?></span></label><br />
-			<input type="text" id="wpcf7-ctct-accept" name="wpcf7-ctct[accept]" placeholder="Example: [checkbox-456]" class="wide" size="70" value="<?php echo esc_attr( $cf7_ctct['accept'] ); ?>" />
+			<input type="text" id="wpcf7-ctct-accept" name="wpcf7-ctct[accept]" placeholder="Example: [checkbox-456]" class="wide" size="70" value="<?php echo esc_attr( isset($cf7_ctct['accept']) ? $cf7_ctct['accept'] : '' ); ?>" />
 		</div>
 	</div>
 	
@@ -360,7 +366,7 @@ Work Phone: [text work-phone]</pre>
 			<div class="half-<?php if($i % 2 === 0) { echo 'left'; } else { echo 'right'; }?>" style="clear:none;">
 				<div class="mail-field">
 				<label for="wpcf7-ctct-<?php echo $var['tag']; ?>"><?php echo $var['name']; ?></label><br />
-				<input type="text" id="wpcf7-ctct-<?php echo $var['tag']; ?>" name="wpcf7-ctct[fields][<?php echo $var['tag']; ?>]" class="wide" size="70" value="<?php echo esc_attr( $cf7_ctct['fields'][$var['tag']] ); ?>" <?php if(isset($var['placeholder'])) { echo ' placeholder="Example: '.$var['placeholder'].'"'; } ?> />
+				<input type="text" id="wpcf7-ctct-<?php echo isset($var['tag']) ? $var['tag'] : ''; ?>" name="wpcf7-ctct[fields][<?php echo isset($var['tag']) ? $var['tag'] : ''; ?>]" class="wide" size="70" value="<?php echo @esc_attr( isset($cf7_ctct['fields'][$var['tag']]) ? $cf7_ctct['fields'][$var['tag']] : '' ); ?>" <?php if(isset($var['placeholder'])) { echo ' placeholder="Example: '.$var['placeholder'].'"'; } ?> />
 				</div>
 			</div>
 			

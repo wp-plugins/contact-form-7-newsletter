@@ -53,9 +53,14 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.
+* Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
 
 = 1.0.2 =
 * Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
 
 = 1.0.1 =
 * Improved documentation: there is now inline help when setting up form integration.
@@ -68,6 +73,9 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.
+* Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
 
 = 1.0.2 =
 * Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>

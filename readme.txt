@@ -1,27 +1,24 @@
-=== Contact Form 7 & Constant Contact ===
-Contributors: katzwebdesign
+=== Contact Form 7 - Constant Contact Module ===
+Contributors: katzwebservices
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
 Requires at least: 3.2
 Tested up to: 3.4.2
-Stable tag: trunk
+Stable tag: 1.0
 License: GPLv2 or later
 
 Easily integrate Constant Contact with the Contact Form 7 plugin.
 
 == Description ==
 
-### Add Submissions to Your Newsletter with Constant Contact
+> This awesome plugin requires a <a href="http://www.constantcontact.com/features/signup.jsp" title="Sign up for Constant Contact" rel="nofollow">Constant Contact account</a> and the <a href="http://wordpress.org/extend/plugins/contact-form-7/" rel="nofollow">Contact Form 7</a> plugin.
 
 Automatically add contact form submissions to Constant Contact lists that you choose! The plugin settings are configured on a per-form basis on the Contact Form 7 form configuration pages.
 
-#### Features
+### Features
 * Add contacts to multiple lists at once
 * Sync form fields to Constant Contact fields, including your Custom Fields
-* Add a newsletter opt-in checkbox to your form (see plugin FAQs to learn how)
-
-#### Plugin Requirements
-The plugin requires a <a href="http://www.constantcontact.com/features/signup.jsp" title="Sign up for Constant Contact" rel="nofollow">Constant Contact account</a> and the <a href="http://wordpress.org/extend/plugins/contact-form-7/" rel="nofollow">Contact Form 7</a> plugin (version 3.1 or later).
+* Add a newsletter opt-in checkbox to your form (see <a href="http://wordpress.org/extend/plugins/contact-form-7-newsletter/faq/">plugin FAQs</a> to learn how)
 
 == Installation ==
 
@@ -39,9 +36,9 @@ Yes, this plugin requires a <a href="http://www.constantcontact.com/features/sig
 = Does this plugin allow for an opt-in checkbox =
 
 Yes, by including a checkbox tag in the form such as:
-[checkbox add-email-list default:1 "Add Me To Your Mailing List"]
+`[checkbox add-email-list default:1 "Add Me To Your Mailing List"]`
 
-Then add [add-email-list] to the "Opt-In Field" option in the Constant Contact section.
+Then add `[add-email-list]` to the "Opt-In Field" option in the Constant Contact section.
 
 = Where is the settings page =
 
@@ -54,10 +51,18 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 == Changelog ==
 
+= 1.0.1 =
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
+
 = 1.00 =
 * Liftoff!
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+* Improved documentation: there is now inline help when setting up form integration.
+* Improved plugin translation support
 
 = 1.00 =
 * Liftoff!

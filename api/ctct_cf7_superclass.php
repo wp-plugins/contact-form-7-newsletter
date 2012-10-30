@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 class CTCT_SuperClass extends CTCTUtility {
-	
+
 	function __construct($user = null, $password=null) {
 		self::updateSettings($this);
 	}
-	
+
 	public function updateSettings($object = false) {
 		$settings = get_option("ctct_cf7");
 		$object->login = trim($settings['username']);
@@ -15,23 +15,23 @@ class CTCT_SuperClass extends CTCTUtility {
 		$object->requestLogin = $object->apikey.'%'.$object->login.':'.$object->password;
 		$object->curl_debug = true;
 	}
-	
+
 	public function listSubscribe($id, $merge_vars, $email_type='html') {
         $params = $merge_vars;
-        
+
         foreach($params as $key => $p) {
         	$p = trim($p);
         	if(empty($p) && $p != '0') {
         		unset($params[$key]);
         	}
         }
-        
+
         $params["lists"] = array($id); //array(preg_replace('/(?:.*?)\/lists\/(\d+)/ism','$1',$id));
         $params['mail_type'] = strtolower($params['mail_type']);
         if($params['mail_type'] != 'html' && $params['mail_type'] != 'text') {
         	$params['mail_type'] = 'html';
         }
-		
+
         // Check if email already exists; update if it does
         if($existingID = self::CC_Contact()->subscriberExists($params['email_address'])) {
         	$contactXML = self::CC_Contact()->createContactXML((string)$existingID,$params);
@@ -42,50 +42,50 @@ class CTCT_SuperClass extends CTCTUtility {
         	$contactXML = (string)$contactXML;
         	$return = self::CC_Contact()->addSubscriber($contactXML);
         }
-        
+
         return $return;
-        
+
 	}
-	
+
 	public function CC_List() {
 		$ccListOBJ = new CC_List();
 		self::updateSettings($ccListOBJ);
 		return $ccListOBJ;
 	}
-	
+
 	public function CC_Campaign() {
 		$CC_Campaign = new CTCTCampaign();
 		self::updateSettings($CC_Campaign);
 		return $CC_Campaign;
 	}
-	
+
 	public function CC_ContactsCollection() {
 		$CC_ContactsCollection = new CTCTContactsCollection();
 		self::updateSettings($CC_ContactsCollection);
 		return $CC_ContactsCollection;
 	}
-	
+
 	public function CC_Utility() {
 		$CC_Utility = new CTCTUtility();
 		self::updateSettings($CC_Utility);
 		return $CC_Utility;
 	}
-	
+
 	public function CC_Contact($params = array()) {
 		$CC_Contact = new CTCTContact($params);
 		self::updateSettings($CC_Contact);
 		return $CC_Contact;
 	}
-	
+
 	public function CC_ListsCollection() {
 		$CC_ListsCollection = new CTCTListsCollection();
 		self::updateSettings($CC_ListsCollection);
 		return $CC_ListsCollection;
 	}
-	
+
 	public function getAvailableLists() {
 		$lists = self::getAllLists();
-		
+
 		foreach ($lists as $key => $list) {
 			if(!is_numeric($list['id'])) {
 				unset($lists[$key]);
@@ -98,7 +98,7 @@ class CTCT_SuperClass extends CTCTUtility {
 		return $id;
 	}
 	public function getAllLists() {
-		
+
 		$ctct_cf7_alllists = get_site_transient('ctct_cf7_alllists');
 		if($ctct_cf7_alllists && is_array($ctct_cf7_alllists) && !is_wp_error($ctct_cf7_alllists) && (!isset($_GET['cache']) && !isset($_GET['refresh']))) {
 			return $ctct_cf7_alllists;
@@ -113,15 +113,15 @@ class CTCT_SuperClass extends CTCTUtility {
 				'id' => $listid,
 				'name' => $List->getName()
 			);
-			
+
 			$outputLists[$listid] = $vars;
 		}
-		
+
 		set_site_transient('ctct_cf7_alllists', $outputLists, 60*60*24);
-		
+
 		return $outputLists;
 	}
-	
+
 	public function listMergeVars() {
 		return array(
 			array('tag'=>'email_address', 'req' => true, 'name' => "Email Address", 'placeholder' => '[your-email]'),
@@ -161,5 +161,5 @@ class CTCT_SuperClass extends CTCTUtility {
 			array('tag'=>'custom_field_15','req' => false, 'name' => "Custom Field 15 (Up to 50 characters)"),
 		);
 	}
-	
+
 }

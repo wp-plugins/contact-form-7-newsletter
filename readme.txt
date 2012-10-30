@@ -3,7 +3,7 @@ Contributors: katzwebservices, katzwebdesign
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
 Requires at least: 3.2
-Tested up to: 3.4.2
+Tested up to: 3.5 beta2
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -51,6 +51,11 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 == Changelog ==
 
+= 1.0.4 =
+* Added support for more than 50 contact lists
+* Now displays lists in tidy columns on modern browsers
+* Restored the "Refresh Lists" link to un-cache lists
+
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.
 * Fixed issue with first-time form setup potentially breaking sites with PHP warnings, <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-plugin-doesnt-work-with-php-version-5310">as reported here</a>
@@ -71,6 +76,11 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 * Liftoff!
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+* Added support for more than 50 contact lists
+* Now displays lists in tidy columns on modern browsers
+* Restored the "Refresh Lists" link to un-cache lists
 
 = 1.0.3 =
 * Renamed Constant Contact API wrapper classes for better namespacing in order to fix <a href="http://wordpress.org/support/topic/plugin-contact-form-7-constant-contact-fatal-error-when-activating">fatal errors</a> when users already have a plugin with the same class names.

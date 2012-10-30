@@ -1,7 +1,7 @@
 <?php
-/** 
- * ctctWrapper.php 
- * 
+/**
+ * ctctWrapper.php
+ *
  * Constant Contact PHP Wrapper, includes access to:
  * 1. Contacts Collection - add, delete, update, and get contacts
  * 2. Campaign Collection - add, delete, update, and get campaigns
@@ -9,13 +9,13 @@
  * 4. Event Collection - get events and registrants
  * 5. Activities Collection - add, and get activities
  * 6. Library Collection - add and get images and folders
- *  
+ *
  * @name ctctWrapper.php
- * @author Constant Contact API Support Team <webservices@constantcontact.com> 
+ * @author Constant Contact API Support Team <webservices@constantcontact.com>
  * @version 1.0
  * @link http://developer.constantcontact.com
  * @package ctctWrapper
- * 
+ *
  */
 	/**
 	 * Utility Class for all HTTP calls
@@ -28,58 +28,58 @@
 	{
 		/**
 		 * Public Function __construct of Utility Object
-		 * 
+		 *
 		 * Sets variables for username, password, and API key, as well as
 		 * constructs the login request string: APIKey%Username:Password
-		 * 
+		 *
 		 * Also sets ActionBy settings:
 		 * - ACTION_BY_CUSTOMER will add contacts as if they were being added by Site Owner.
 		 * - ACTION_BY_CONTACT will add contacts as if they were added by themselves
-		 * 
+		 *
 		 */
 		public function __construct()
 		{
 			$this->setActionBy('ACTION_BY_CONTACT');
-			
+
 			/* DO NOT CHANGE! It will break the plugin if changed. */
-			$this->setApiKey('a9f642af-8f34-43b2-8882-00e6aaebfa46'); 
+			$this->setApiKey('a9f642af-8f34-43b2-8882-00e6aaebfa46');
 			$this->setApiPath('https://api.constantcontact.com');
 			$this->setLogin(CTCTCF7::get_username());
 			$this->setPassword(CTCTCF7::get_password());
 			$this->setRequestLogin($this->getApiKey() . "%" . $this->getLogin() . ":" . $this->getPassword());
         }
-	    
-	    
-		
+
+
+
 		private $actionBy;
 		private $apiKey;
 		private $apiPath;
 		private $login;
 		private $password;
 		private $requestLogin;
-		
+
 		//Getters and Setters for the Utility class
 		public function setActionBy($value) { $this->actionBy = $value; }
 		public function getActionBy() { return $this->actionBy; }
-		
+
 		public function setApiKey($value) { $this->apiKey = $value; }
 		public function getApiKey() { return $this->apiKey; }
-		
+
 		public function setApiPath($value) { $this->apiPath = $value; }
 		public function getApiPath() { return $this->apiPath; }
-		
+
 		public function setLogin($value) { $this->login = $value; }
 		public function getLogin() { return $this->login; }
-		
+
 		public function setPassword($value) { $this->password = $value; }
 		public function getPassword() { return $this->password; }
-		
+
 		public function setRequestLogin($value) { $this->requestLogin = $value; }
 		public function getRequestLogin() { return $this->requestLogin; }
 
 		/**
 		* Public function httpGet sends a GET request to the API server
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
 		*/
@@ -90,7 +90,7 @@
 		}
 		/**
 		* Public function httpPut sends a PUT request to the API server
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @param string $paramter - data passed to the URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
@@ -102,7 +102,7 @@
 		}
 		/**
 		* Public function httpPost sends a POST request to the API server
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @param string $paramter - data passed to the URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
@@ -114,18 +114,18 @@
 		}
 		/**
 		* Public function httpDelete sends a DELETE request to the API server
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
 		*/
 		public function httpDelete($request)
-		{	
+		{
 			$deleteRequest = $this->httpRequest('receive', 'DELETE', $request, '');
 			return $deleteRequest;
 		}
 		/**
 		* Public function urlEncodedPost sends a POST request to the API server for URL encoded requests
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @param string $paramter - data passed to the URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
@@ -137,7 +137,7 @@
 		}
 		/**
 		* Public function multiPartPost sends a POST request to the API server for multipart/form data requests
-		* 
+		*
 		* @param string $request - valid constant contact URI
 		* @param string $paramter - data passed to the URI
 		* @return string $getRequest - returns an array from httpRequest with the API error and success messaging and codes
@@ -149,7 +149,7 @@
 		}
 		/**
 		* Private function httpRequest sends requests to the API server
-		* 
+		*
 		* @param string $info - Type of request, multipart, urlEncode, receive, or send
 		* @param string $type - Server call, POST, GET, PUT, DELETE
 		* @param string $request - valid constant contact URI
@@ -165,7 +165,7 @@
 			curl_setopt($ch, CURLOPT_USERPWD, $this->getRequestLogin());
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			
+
 			if ($info == 'urlEncode')
 			{
 				curl_setopt($ch, CURLOPT_HTTPHEADER, Array("Content-Type:application/x-www-form-urlencoded", 'Content-Length: ' . strlen($parameter)));
@@ -180,7 +180,7 @@
 			{
 				curl_setopt($ch, CURLOPT_HTTPHEADER, Array("Content-Type:application/atom+xml", "accept:application/atom+xml", 'Content-Length: ' . strlen($parameter)));
 			}
-			
+
 			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
@@ -189,26 +189,26 @@
 			{
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $parameter);
 			}
-			
+
 			$return['xml'] = curl_exec($ch);
 			$return['info'] = curl_getinfo($ch);
 			$return['error'] = curl_error($ch);
-			
+
 			return $return;
 		}
 	}
 	/**
 	 * Activities Collection Class for Activitiy API calls
-	 * 
+	 *
 	 * Includes functions for listing all activities within the account, specific activity details,
 	 * creating a bulk import with Multipart/form data and bulk url encoded calls, also bulk export
-	 * 
+	 *
 	 */
 	class CTCTActivitiesCollection
 	{
 		/**
 		* Public function that Gets a list of first 50 Activities in the account
-		* 
+		*
 		* @return array $allActivities - array of two arrays, array 1 is activity objects, array 2 is link for next 50 activities
 		*/
 		public function listActivities()
@@ -216,12 +216,12 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/activities');
 			$allActivities = array();
-			
+
 			$activityList = array();
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$activity = new CTCTActivity();
@@ -235,7 +235,7 @@
 				$activity->setRunStartTime($item->content->Activity->RunStartTime);
 				$activity->setRunFinishTime($item->content->Activity->RunFinishTime);
 				$activity->setInsertTime($item->content->Activity->InsertTime);
-				
+
 				$activityList[] = $activity;
 			}
 
@@ -243,14 +243,14 @@
 			{
 				$pages[] = $parsedReturn->link[2]->Attributes()->href;
 			}
-			
+
 			$allActivities = array($activityList, $pages);
-			
+
 			return $allActivities;
 		}
 		/**
 		* Public function that gets full details of a specific activity, from an activity object.
-		* 
+		*
 		* @param object $activity - a valid activity object with valid activity link
 		* @return object $activity with full details of the passed activity object
 		*/
@@ -269,10 +269,10 @@
 				return $activity;
 			}
 		}
-		
+
 		/**
 		* Public function POSTs a URL encoded string to the activities collection, for bulk importing and exporting.
-		* 
+		*
 		* @param string $urlEncodedPost - URL encoded string that follows this format:
 		*   - activityType=SV_ADD&data=Email+Address%2CFirst+Name%2CLast+Name%0Awstest3%40example.com%2C+Fred%2C+Test%0Awstest4%40example.com%2C+Joan%2C+Test%0Awstest5%40example.com%2C+Ann%2C+Test&lists=http%3A%2F%2Fapi.constantcontact.com%2Fws%2Fcustomers%2Fjoesflowers%2Flists%2F2&lists=http%3A%2F%2Fapi.constantcontact.com%2Fws%2Fcustomers%2Fjoesflowers%2Flists%2F5
 		* @return string - Success or Fail code from the API server
@@ -288,7 +288,7 @@
 		//
 		/**
 		* Public function that sends a POST request that creates an Export Contact Activity, returns exported activity
-		* 
+		*
 		* @param string $filetype - either CSV or TXT file to upload
 		* @param object $list - valid list object
 		* @param string $exportOptDate - true to include the Add/Remove Date in the export file, false to not include it
@@ -310,13 +310,13 @@
 			$urlEncodedPost = "activityType=EXPORT_CONTACTS&fileType=" . $filetype . "&exportOptDate=" . $exportOptDate . "&exportOptSource=" . $exportOptSource . "&exportListName=" . $exportListName . "&sortBy=" . $sortBy . $allColumns . "&listId=" . urlencode($list->getId());
 			$activityXml = $utility->urlEncodedPost($call, $urlEncodedPost);
 			$activity = $this->createActivityStruct($activityXml);
-			
+
 			return $activity;
 		}
 		/**
-		* Public function that passes @fileArray to the activities collection 
+		* Public function that passes @fileArray to the activities collection
 		* as a mutlipart/form data request
-		* 
+		*
 		* @param array $fileArray - array of dataFile, activityType and lists
 		* @return string - Success or Fail code from the API server
 		*/
@@ -330,7 +330,7 @@
 		}
 		/**
 		* Private function that creates the structure for an Activity Object
-		* 
+		*
 		* @param string $activityXml - the returned XML from an activity call as a string
 		* @return object $activityObj - valid activity object
 		*/
@@ -358,28 +358,28 @@
 					$activity['errors'][$item]['Message'] = (trim((string) $item->Message));
 				}
 			}
-			
+
 			$activityObj = new CTCTActivity($activity);
 			return $activityObj;
 		}
 	}
 	/**
 	 * Activity class defines an activity object
-	 * 
+	 *
 	 * Defines an activity object, includes all activity variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTActivity
 	{
 		/**
 		* Construct function for the Activity Class
-		* 
+		*
 		* @param array $params - an array of variables that set up an activity object
 		* @return object - activity object with passed variables set to the object
 		*/
 		public function __construct($params = array())
-		{	
+		{
 			$this->setLink($params['link']);
 			$this->setId($params['id']);
 			$this->setUpdated($params['updated']);
@@ -398,10 +398,10 @@
 					$this->setErrors($tmp);
 				}
 			}
-			
+
 			return $this;
 		}
-		
+
 		private $link;
 		private $id;
 		private $updated;
@@ -457,15 +457,15 @@
 	}
 	/**
 	 * Library Collection Class for calls to the library collection API
-	 * 
+	 *
 	 * Includes functions to create folders, list folders, list images and delete images and folders
-	 * 
+	 *
 	 */
 	class CTCTLibraryCollection
 	{
 		/**
 		* Public function that gets a list of first 50 folders in the account
-		* 
+		*
 		* @return array $allFolders - an array of two arrays, array 1 is folder objects, array 2 is link for next 50 folders
 		*/
 		public function listFolders()
@@ -482,12 +482,12 @@
 			foreach ($parsedReturn->entry as $item)
 			{
 				$folder = new CTCTFolder();
-				$folder->setFolderLink($item->link->Attributes()->href);  
+				$folder->setFolderLink($item->link->Attributes()->href);
 				$folder->setFolderId($item->id);
 				$folder->setFolderName($item->title);
 				$folderList[] = $folder;
 			}
-			
+
 			if ($parsedReturn->link[2])
 			{
 				$pages[] = $parsedReturn->link[2]->Attributes()->href;
@@ -499,7 +499,7 @@
 		}
 		/**
 		* Public function that does a POST to the Library collection, passing a folder object
-		* 
+		*
 		* @param object $folder - a valid folder object with all required fields
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -514,7 +514,7 @@
 		}
 		/**
 		* Public function that gets a list of first 50 images in the account
-		* 
+		*
 		* @return array $allImages - an array of two arrays, array 1 is image objects, array 2 is link for next 50 images
 		*/
 		public function listImages($folder)
@@ -527,7 +527,7 @@
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml'], null, null, "http://www.w3.org/2005/Atom");
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$imageArray['image_link'] = $item->link->Attributes()->href;
@@ -537,19 +537,19 @@
 				$image = new CTCTImage($imageArray);
 				$imageList[] = $image;
 			}
-			
+
 			if ($parsedReturn->link[2])
 			{
 				$pages[] = $parsedReturn->link[2]->Attributes()->href;
 			}
-			
+
 			$allImages = array($imageList, $pages);
-			
+
 			return $allImages;
 		}
 		/**
 		* Public function that gets image details of a single image object passed to it.
-		* 
+		*
 		* @param object $image - a valid image object with a valid image link
 		* @return object $image - returns image object with full details
 		*/
@@ -570,7 +570,7 @@
 		}
 		/**
 		* Public function that deletes an image from the account
-		* 
+		*
 		* @param object $image - a valid image object with a valid image link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -584,7 +584,7 @@
 		}
 		/**
 		* Public function that removes every image from a specific folder
-		* 
+		*
 		* @param object $folder - a valid folder object with a valid folder link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -598,7 +598,7 @@
 		}
 		/**
 		* Private function that creates folder XML
-		* 
+		*
 		* @param object $folder - a valid folder object with all required fields
 		* @return string $xmlReturn - valid XML of a folder
 		*/
@@ -614,7 +614,7 @@
 		}
 		/**
 		* Private function that creates a folder object from XML
-		* 
+		*
 		* @param string $folderXml - Valid folder XML
 		* @return object $folderStruct - returns a valid folder object
 		*/
@@ -630,7 +630,7 @@
 		}
 		/**
 		* Private function that creates an image object from XML
-		* 
+		*
 		* @param string $imageXml - Valid image XML
 		* @return object $imageStruct - returns a valid image object
 		*/
@@ -649,7 +649,7 @@
 			$image['file_size'] = ($parsedArray[0]->FileSize);
 			$image['last_updated'] = ($parsedArray[0]->LastUpdated);
 			$image['file_type'] = ($parsedArray[0]->FileType);
-			
+
 			if ($parsedArray[0]->ImageUsages)
 			{
 				foreach ($parsedArray[0]->ImageUsages->ImageUsage as $item)
@@ -657,25 +657,25 @@
 					$image['image_usage'][] = (trim((string) $item->Link->href));
 				}
 			}
-			
+
 			$imageStruct = new CTCTImage($image);
 			return $imageStruct;
-			
+
 		}
-		
+
 	}
 	/**
 	 * Folder class defines a folder object
-	 * 
+	 *
 	 * Defines a folder object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTFolder
 	{
 		/**
 		* Construct function for the Folder Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a folder object
 		* @return object folder object with passed variables set to the object
 		*/
@@ -687,32 +687,32 @@
 
 			return $this;
 		}
-		
+
 		private $folderName;
 		private $folderId;
 		private $folderLink;
-		
+
 		public function setFolderName( $value ) { $this->folderName = $value; }
 		public function getFolderName() { return $this->folderName; }
-		
+
 		public function setFolderId( $value ) { $this->folderId = $value; }
 		public function getFolderId() { return $this->folderId; }
-		
+
 		public function setFolderLink( $value ) { $this->folderLink = $value; }
 		public function getFolderLink() { return $this->folderLink; }
 	}
 	/**
 	 * Image class defines an Image object
-	 * 
+	 *
 	 * Defines an Image object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTImage
 	{
 		/**
 		* Construct function for the Image Class
-		* 
+		*
 		* @param array $params - an array of variables that set up an image object
 		* @return object image object with passed variables set to the object
 		*/
@@ -728,7 +728,7 @@
 			$this->setFileSize($params['file_size']);
 			$this->setUpdated($params['last_updated']);
 			$this->setFileType($params['file_type']);
-			
+
 			if ($params['image_usage'])
 			{
 				foreach ($params['image_usage'] as $tmp)
@@ -736,10 +736,10 @@
 					$this->setImageUsage($tmp);
 				}
 			}
-			
+
 			return $this;
 		}
-		
+
 		private $link;
 		private $fileName;
 		private $fileType;
@@ -751,13 +751,13 @@
 		private $updated;
 		private $md5Hash;
 		private $imageUsage = array();
-		
+
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { return $this->link; }
-		
+
 		public function setFileName( $value ) { $this->fileName = $value; }
 		public function getFileName() { return $this->fileName; }
-		
+
 		public function setFileType( $value ) { $this->fileType = $value; }
 		public function getFileType() { return $this->fileType; }
 
@@ -769,34 +769,34 @@
 
 		public function setWidth( $value ) { $this->width = $value; }
 		public function getWidth() { return $this->width; }
-		
+
 		public function setDescription( $value ) { $this->description = $value; }
 		public function getDescription() { return $this->description; }
-		
+
 		public function setFileSize( $value ) { $this->fileSize = $value; }
 		public function getFileSize() { return $this->fileSize; }
-		
+
 		public function setUpdated( $value ) { $this->updated = $value; }
 		public function getUpdated() { return $this->updated; }
-		
+
 		public function setMd5Hash( $value ) { $this->md5Hash = $value; }
 		public function getMd5Hash() { return $this->md5Hash; }
-		
+
 		public function setImageUsage( $value ) { $this->imageUsage[] = $value; }
 		public function getImageUsage() { return $this->imageUsage; }
 	}
 	/**
 	 * Contacts Collection Class for calls to the contact collection API
-	 * 
+	 *
 	 * Includes functions for listing all contacts within the account, specific contact details,
 	 * also creating, removing, and sending contacts to do not mail.
-	 * 
+	 *
 	 */
 	class CTCTContactsCollection
 	{
 		/**
 		* Public function that does a POST to the Contacts collection, passing a contact object
-		* 
+		*
 		* @param object $contact - a valid contact object with all required fields
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -811,7 +811,7 @@
 		}
 		/**
 		* Public function that deletes a contact, sending the contact to the Do Not Mail List
-		* 
+		*
 		* @param object $contact - a valid contact object with a valid contact link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -822,10 +822,10 @@
 			$return = $utility->httpDelete($call);
 			$code = $return['info']['http_code'];
 			return $code;
-		}	
+		}
 		/**
 		* Public function that gets contact details of a single contact object passed to it.
-		* 
+		*
 		* @param object $contact - a valid contact object with a valid contact link
 		* @return object $contact - returns contact object with full details
 		*/
@@ -846,7 +846,7 @@
 		}
 		/**
 		* Public function that gets a list of first 50 contacts in the account
-		* 
+		*
 		* @return array $allContacts - an array of two arrays, array 1 is contact objects, array 2 is link for next 50 contacts
 		*/
 		public function listContacts()
@@ -854,12 +854,12 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts');
 			$allContacts = array();
-			
+
 			$contactList = array();
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$contact = new CTCTContact();
@@ -876,14 +876,14 @@
 			{
 				$pages[] = $parsedReturn->link[2]->Attributes()->href;
 			}
-			
+
 			$allContacts = array($contactList, $pages);
-			
+
 			return $allContacts;
 		}
 		/**
 		* Public function that gets a list of first 50 contact events in the account of a specific contact event type
-		* 
+		*
 		* @param object $contact - valid contact object with valid contact link
 		* @param string $type - type must be opens, clicks, sends, optOuts, bounces, or forwards.
 		* @return object $contact - returns contact object with fields set with array of the events that were requested
@@ -896,32 +896,32 @@
 				case 'opens':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/opens");
 					$parsedReturn = simplexml_load_string($call['xml']);
-					
+
 					foreach ($parsedReturn->entry as $item)
 					{
 						$contact->setOpens(array("CampaignLink" => $item->content->OpenEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->OpenEvent->EventTime));
 					}
-					
+
 					break;
 				case 'clicks':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/clicks");
 					$parsedReturn = simplexml_load_string($call['xml']);
-					
+
 					foreach ($parsedReturn->entry as $item)
 					{
 						$contact->setClicks(array("CampaignLink" => $item->content->ClickEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->ClickEvent->EventTime, "LinkUrl" => $item->content->ClickEvent->LinkUrl));
 					}
-					
+
 					break;
 				case 'bounces':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/bounces");
 					$parsedReturn = simplexml_load_string($call['xml']);
-					
+
 					foreach ($parsedReturn->entry as $item)
 					{
 						$contact->setBounces(array("CampaignLink" => $item->content->BounceEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->BounceEvent->EventTime, "Code" => $item->content->BounceEvent->Code, "Description" => $item->content->BounceEvent->Description));
 					}
-					
+
 					break;
 				case 'optOuts':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/optouts");
@@ -932,33 +932,33 @@
 						$contact->setOptOuts(array("CampaignLink" => $item->content->OptoutEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->OptoutEvent->EventTime, "OptOutSource" => $item->content->OptoutEvent->OptOutSource, "OptOutReason" => $item->content->OptoutEvent->OptOutReason));
 					}
 					break;
-					
+
 				case 'forwards':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/forwards");
 					$parsedReturn = simplexml_load_string($call['xml']);
-					
+
 					foreach ($parsedReturn->entry as $item)
 					{
 						$contact->setForwards(array("CampaignLink" => $item->content->ForwardEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->ForwardEvent->EventTime));
 					}
-					
+
 					break;
 				case 'sends':
 					$call = $utility->httpGet($utility->getApiPath() . $contact->getLink() . "/events/sends");
 					$parsedReturn = simplexml_load_string($call['xml']);
-					
+
 					foreach ($parsedReturn->entry as $item)
 					{
 						$contact->setSends(array("CampaignLink" => $item->content->SentEvent->Campaign->link->Attributes()->href, "EventTime" => $item->content->SentEvent->EventTime));
 					}
-					
+
 					break;
 			}
 			return $contact;
 		}
 		/**
 		* Public function that removes a contact from all lists in the account
-		* 
+		*
 		* @param object $contact - a valid contact object with a valid contact link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -967,7 +967,7 @@
 			$utility = new CTCTUtility();
 			$existingContact = $this->listContactDetails($contact);
 			$existingContact->removeLists();
-			
+
 			$contactXml = $this->createContactXml($existingContact->getId(), $existingContact);
 			$return = $utility->httpPut($utility->getApiPath() . $existingContact->getLink(), $contactXml);
 			$code = $return['info']['http_code'];
@@ -975,7 +975,7 @@
 		}
 		/**
 		* Public function that searches for a contact based on their email address
-		* 
+		*
 		* @param string $emailAddress - valid email address
 		* @return array $searchContacts - an array of two arrays, array 1 is search results, array 2 is link for next 50 contacts
 		*/
@@ -984,18 +984,18 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?email=' . urlencode($emailAddress));
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			if (!$parsedReturn->entry)
 			{
 				return false;
 			}
-			
+
 			$email = $parsedReturn->entry->content->Contact->EmailAddress;
 			$id = $parsedReturn->entry->link->Attributes();
 			$searchResults = array();
 			$searcgContacts = array();
 			$pages = array();
-		
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$contact = new CTCTContact();
@@ -1007,19 +1007,19 @@
 				$contact->setEmailType($item->Contact->EmailType);
 				$searchResults[] = $contact;
 			}
-		
+
 			if ($parsedReturn->link[4])
 			{
 				$pages[] = $parsedReturn->link[4]->Attributes()->href;
 			}
-		
+
 			$searchContacts = array($searchResults, $pages);
-		
+
 			return $searchContacts;
 		}
 		/**
 		* Public function that shows a list of contacts updated by date in a list of list type
-		* 
+		*
 		* @param string $date - valid date
 		* @param string $syncType - valid sync type is listtype or listid
 		* @param string $list - either the list ID if listid is chosen, or the list type, if list type is chosen
@@ -1030,14 +1030,14 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts?updatedsince=' . $date . '&' . $syncType . '=' . $list);
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			$email = $parsedReturn->entry->content->Contact->EmailAddress;
 			$id = $parsedReturn->entry->link->Attributes();
-			
+
 			$searchResults = array();
 			$syncContacts = array();
 			$pages = array();
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$contact = new CTCTContact();
@@ -1049,18 +1049,18 @@
 				$contact->setEmailType($item->Contact->EmailType);
 				$searchResults[] = $contact;
 			}
-			
+
 			if ($parsedReturn->link[4])
 			{
 				$pages[] = $parsedReturn->link[4]->Attributes()->href;
 			}
-			
+
 			$syncContacts = array($searchResults, $pages);
 			return $syncContacts;
 		}
 		/**
 		* Public function that updates a contact
-		* 
+		*
 		* @param string $contactId - valid contact ID of the contact that needs to be updated
 		* @param object $contact - valid contact object of the new updates to the contact
 		* @return string $code - success or fail message from the API server
@@ -1076,7 +1076,7 @@
 		}
 		/**
 		* Private function that creates a contact object from XML
-		* 
+		*
 		* @param string $contactXml - Valid contact XML
 		* @return object $contactStruct - returns a valid contact object
 		*/
@@ -1121,7 +1121,7 @@
 			$fullContact['notes'] = ($parsedReturn->content->Contact->Note);
 			$fullContact['mail_type'] = ($parsedReturn->content->Contact->EmailType);
 			$fullContact['status'] = ($parsedReturn->content->Contact->Status);
-		
+
 			if ($parsedReturn->content->Contact->ContactLists->ContactList)
 			{
 				foreach ($parsedReturn->content->Contact->ContactLists->ContactList as $item)
@@ -1129,13 +1129,13 @@
 					$fullContact['lists'][] = (trim((string) $item->Attributes()));
 				}
 			}
-			
+
 			$contact = new CTCTContact($fullContact);
 			return $contact;
 		}
 		/**
 		* Private function that creates contact XML
-		* 
+		*
 		* @param string $id - optional valid contact ID, used for updating a contact
 		* @param object $contact - valid contact object
 		* @return string $entry - valid XML of a contact
@@ -1147,7 +1147,7 @@
 			if ( empty($id)) {
 				$id = "urn:uuid:E8553C09F4xcvxCCC53F481214230867087";
 			}
-			
+
 			$update_date = date("Y-m-d").'T'.date("H:i:s").'+01:00';
 			$xml_string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><entry xmlns='http://www.w3.org/2005/Atom'></entry>";
 			$xml_object = simplexml_load_string($xml_string);
@@ -1168,7 +1168,7 @@
 			$lname_node = $contact_node->addChild("MiddleName", urldecode(htmlspecialchars(($contact->getMiddleName()), ENT_QUOTES, 'UTF-8')));
 			$lname_node = $contact_node->addChild("CompanyName", urldecode(htmlspecialchars(($contact->getCompanyName()), ENT_QUOTES, 'UTF-8')));
 			$lname_node = $contact_node->addChild("JobTitle", urldecode(htmlspecialchars(($contact->getJobTitle()), ENT_QUOTES, 'UTF-8')));
-			
+
 			if ($params['status'] == 'Do Not Mail')
 			{
 				$utility->setActionBy('ACTION_BY_CONTACT');
@@ -1204,30 +1204,30 @@
 			$customfield14_node = $contact_node->addChild("CustomField14", htmlspecialchars(($contact->getCustomField14()), ENT_QUOTES, 'UTF-8'));
 			$customfield15_node = $contact_node->addChild("CustomField15", htmlspecialchars(($contact->getCustomField15()), ENT_QUOTES, 'UTF-8'));
 
-			$contactlists_node = $contact_node->addChild("ContactLists");			
+			$contactlists_node = $contact_node->addChild("ContactLists");
 
 			foreach ($contact->getLists() as $tmp)
 			{
 				$contactlist_node = $contactlists_node->addChild("ContactList");
 				$contactlist_node->addAttribute("id", $tmp);
 			}
-			
+
 			$entry = $xml_object->asXML();
 			return $entry;
 		}
 	}
 	/**
 	 * Contact class defines a contact object
-	 * 
+	 *
 	 * Defines a contact object, includes all contact variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTContact
 	{
 		/**
 		* Construct function for the Contact Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a contact object
 		* @return object contact object with passed variables set to the object
 		*/
@@ -1275,7 +1275,7 @@
 			$this->setCustomField15($params['custom_field_15']);
 			$this->setEmailType($params['mail_type']);
 			$this->setOptInSource($utility->getActionBy());
-			
+
 			if ($params['lists'])
 			{
 				foreach ($params['lists'] as $tmp)
@@ -1283,10 +1283,10 @@
 					$this->setLists($tmp);
 				}
 			}
-			
+
 			return $this;
 		}
-	
+
 		private $link;
 		private $id;
 		private $status;
@@ -1336,7 +1336,7 @@
 		private $opens = array();
 		private $optOuts = array();
 		private $sends = array();
-		
+
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { return $this->link; }
 
@@ -1366,7 +1366,7 @@
 
 		public function setJobTitle( $value ) { $this->jobTitle = $value; }
 		public function getJobTitle() { return $this->jobTitle; }
-		
+
 		public function setCompanyName( $value ) { $this->companyName = $value; }
 		public function getCompanyName() { return $this->companyName; }
 
@@ -1466,35 +1466,35 @@
 
 		public function setClicks( $value ) { $this->clicks[] = $value; }
 		public function getClicks() { return $this->clicks; }
-		
+
 		public function setForwards( $value ) { $this->forwards[] = $value; }
 		public function getForwards() { return $this->forwards; }
-		
+
 		public function setOpens( $value ) { $this->opens[] = $value; }
 		public function getOpens() { return $this->opens; }
-		
+
 		public function setOptOuts( $value ) { $this->optOuts[] = $value; }
 		public function getOptOuts() { return $this->optOuts; }
-		
+
 		public function setSends( $value ) { $this->sends[] = $value; }
 		public function getSends() { return $this->sends; }
-		
+
 		public function setOptInSource( $value ) { $this->optInSource = $value; }
 		public function getOptInSource() { return $this->optInSource; }
 
 	}
 	/**
 	 * Campaign class defines a campaign object
-	 * 
+	 *
 	 * Defines a campaign object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 		class CTCTCampaign
 	{
 		/**
 		* Construct function for the Campaign Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a campaign object
 		* @return object campaign object with passed variables set to the object
 		*/
@@ -1541,7 +1541,7 @@
 			$this->setEmailContent($params['email_content']);
 			$this->setTextVersionContent($params['text_version_content']);
 			$this->setStyleSheet($params['style_sheet']);
-			
+
 			if ($params['lists'])
 			{
 				foreach ($params['lists'] as $tmp)
@@ -1555,10 +1555,10 @@
 			$this->setFromEmailAddressLink($params['frm_addr_link']);
 			$this->setReplyEmailAddress($params['rep_addr']);
 			$this->setReplyEmailAddressLink($params['rep_addr_link']);
-			
+
 			$this->setArchiveStatus($params['archive_status']);
 			$this->setArchiveUrl($params['archive_url']);
-			
+
 			return $this;
 		}
 
@@ -1613,17 +1613,17 @@
 
 		public function setCampaignName( $value ) { $this->campaignName = $value; }
 		public function getCampaignName() { return $this->campaignName; }
-		
+
 		public function setStatus( $value ) { $this->status = $value; }
 		public function getStatus() { return $this->status; }
-		
+
 		public function setCampaignDate( $value ) { $this->campaignDate = $value; }
 		public function getCampaignDate() { return $this->campaignDate; }
-		
-		
+
+
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { return $this->link; }
-		
+
 		public function setId( $value ) { $this->id = $value; }
 		public function getId() { return $this->id; }
 
@@ -1644,13 +1644,13 @@
 
 		public function setCampaignForwards( $value ) { $this->campaignForwards = $value; }
 		public function getCampaignForwards() { return $this->campaignForwards; }
-		
+
 		public function setCampaignOptOuts( $value ) { $this->campaignOptOuts = $value; }
 		public function getCampaignOptOuts() { return $this->campaignOptOuts; }
-		
+
 		public function setCampaignSpamReports( $value ) { $this->campaignSpamReports = $value; }
 		public function getCampaignSpamReports() { return $this->campaignSpamReports; }
-		
+
 		public function setCampaignType( $value ) { $this->campaignType = $value; }
 		public function getCampaignType() { return $this->campaignType; }
 
@@ -1731,44 +1731,44 @@
 
 		public function setTextVersionContent( $value ) { $this->textVersionContent = $value; }
 		public function getTextVersionContent() { return $this->textVersionContent; }
-		
+
 		public function setStyleSheet( $value ) { $this->styleSheet = $value; }
 		public function getStyleSheet() { return $this->styleSheet; }
-		
+
 		public function setLists( $value ) { $this->lists[] = $value; }
 		public function getLists() { return $this->lists; }
 		public function removeLists() { $this->lists=""; }
-		
+
 		public function setFromEmailAddress( $value ) { $this->fromEmailAddress = $value; }
 		public function getFromEmailAddress() { return $this->fromEmailAddress; }
-		
+
 		public function setFromEmailAddressLink( $value ) { $this->fromEmailAddressLink = $value; }
 		public function getFromEmailAddressLink() { return $this->fromEmailAddressLink; }
-		
+
 		public function setReplyEmailAddress( $value ) { $this->replyEmailAddress = $value; }
 		public function getReplyEmailAddress() { return $this->replyEmailAddress; }
-		
+
 		public function setReplyEmailAddressLink( $value ) { $this->replyEmailAddressLink = $value; }
 		public function getReplyEmailAddressLink() { return $this->replyEmailAddressLink; }
-		
+
 		public function setArchiveStatus( $value ) { $this->archiveStatus = $value; }
 		public function getArchiveStatus() { return $this->archiveStatus; }
-		
+
 		public function setArchiveUrl( $value ) { $this->archiveUrl = $value; }
 		public function getArchiveUrl() { return $this->archiveUrl; }
 	}
 	/**
 	 * Campaigns Collection Class for calls to the campaign collection API
-	 * 
+	 *
 	 * Includes functions for listing all campaigns within the account, specific campaign details,
 	 * also creating and deleting campaigns
-	 * 
+	 *
 	 */
 	class CTCTCampaignsCollection
 	{
 		/**
 		* Public function that does a POST to the Campaigns collection, passing a campaign object
-		* 
+		*
 		* @param object $campaign - a valid campaign object with all required fields
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -1783,7 +1783,7 @@
 		}
 		/**
 		* Public function that deletes a campaign, using a campaign object
-		* 
+		*
 		* @param object $campaign - a valid campaign object with a valid campaign link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -1797,7 +1797,7 @@
 		}
 		/**
 		* Public function that gets campaign details of a single campaign object passed to it.
-		* 
+		*
 		* @param object $campaign - a valid campaign object with a valid campaign link
 		* @return object $campaign - returns campaign object with full details
 		*/
@@ -1818,20 +1818,20 @@
 		}
 		/**
 		* Public function that gets a list of first 50 campaigns in the account
-		* 
+		*
 		* @return array $allCampaigns - an array of two arrays, array 1 is campaign objects, array 2 is link for next 50 campaigns
 		*/
 		public function listCampaigns()
-		{	
+		{
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/campaigns');
-			
+
 			$allCampaigns = array();
 			$campaignList = array();
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$campaign = new CTCTCampaign();
@@ -1847,14 +1847,14 @@
 			{
 				$pages[] = $parsedReturn->link[4]->Attributes()->href;
 			}
-			
+
 			$allCampaigns = array($campaignList, $pages);
-			
+
 			return $allCampaigns;
 		}
 		/**
 		* Public function that searches Campaigns by Status
-		* 
+		*
 		* @param string $status - valid status is DRAFT, SENT, RUNNING, SCHEDULED
 		* @return array $searchCampaigns - an array of two arrays, array 1 is search results, array 2 is link for next 50 search results
 		*/
@@ -1863,9 +1863,9 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/campaigns?status=' . $status);
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			$email = $parsedReturn->entry->content->Campaign;
-			
+
 			if (!$email)
 			{
 				return false;
@@ -1875,7 +1875,7 @@
 				$searchResults = array();
 				$pages = array();
 				$searchCampaigns = array();
-			
+
 				foreach ($parsedReturn->entry as $item)
 				{
 					$campaign = new CTCTCampaign();
@@ -1886,26 +1886,26 @@
 					$campaign->setCampaignDate($item->content->Campaign->Date);
 					$searchResults[] = $campaign;
 				}
-				
+
 				if ($parsedReturn->link[4])
 				{
 					$pages[] = $parsedReturn->link[4]->Attributes()->href;
 				}
-			
+
 				$searchCampaigns = array($searchResults, $pages);
-			
+
 				return $searchCampaigns;
 			}
 		}
 		/**
 		* Public function that updates a draft campaign
-		* 
+		*
 		* @param string $campaignId - valid campaign ID of the campaign that needs to be updated
 		* @param object $campaign - valid campaign object of the new updates to the campaign
 		* @return string $code - success or fail message from the API server
 		*/
 		public function updateCampaign($campaign)
-		{	
+		{
 			$utility = new CTCTUtility();
 			$existingCampaign = $this->listCampaignDetails($campaign);
 			$campaignXml = $this->createCampaignXml($existingCampaign->getId(), $campaign);
@@ -1915,7 +1915,7 @@
 		}
 		/**
 		* Private function that creates a campaign object from XML
-		* 
+		*
 		* @param string $campaignXml - Valid campaign XML
 		* @return object $campaignStruct - returns a valid campaign object
 		*/
@@ -1978,13 +1978,13 @@
 					$campaign['lists'][] = (trim((string) $item->Attributes()->href));
 				}
 			}
-			
+
 			$campaignStruct = new CTCTCampaign($campaign);
 			return $campaignStruct;
 		}
 		/**
 		* Private function that creates campaign XML
-		* 
+		*
 		* @param string $id - optional valid campaign ID, used for updating a campaign
 		* @param object $campaign - a valid campaign object with all required fields
 		* @return string $XmlReturn - valid XML of a campaign
@@ -1992,24 +1992,24 @@
 		private function createCampaignXml($id, $campaign)
 		{
 			$utility = new CTCTUtility();
-			
+
 			if (empty($id))
 			{
 				$id = ('http://api.constantcontact.com/ws/customers/' . $utility->getLogin() . '/campaigns/1100546096289');
-				$standard_id = ('http://api.constantcontact.com/ws/customers/' . $utility->getLogin().'/campaigns'); 
+				$standard_id = ('http://api.constantcontact.com/ws/customers/' . $utility->getLogin().'/campaigns');
 			}
 			else
 			{
                 $standard_id = $id;
             }
-			
+
 			$xml = simplexml_load_string("<?xml version='1.0' encoding='UTF-8'?><entry xmlns='http://www.w3.org/2005/Atom' />");
 			$link = $xml->addChild("link");
 			$link_href = $link->addAttribute('href', '/ws/customers/' . $utility->getLogin() . '/campaigns');
 			$link_rel = $link->addAttribute('rel', 'edit');
 			$xml->addChild("id", $standard_id);
 			$title = $xml->addChild("title", $campaign->getCampaignName());
-			$title->addAttribute("type", "text"); 
+			$title->addAttribute("type", "text");
 			$xml->addChild("updated", date("Y-m-d").'T'.date("H:i:s").'+01:00');
 			$author = $xml->addChild("author");
 			$author->addChild("name", "Constant Contact");
@@ -2059,8 +2059,8 @@
 					$contactList->addAttribute("id", $list);
 					$contactLink = $contactList->addChild("link");
 					$contactLink->addAttribute("xmlns", "http://www.w3.org/2005/Atom");
-					$contactLink->addAttribute("href", str_replace("http://api.constantcontact.com", "", $list)); 
-					$contactLink->addAttribute("rel", "self"); 
+					$contactLink->addAttribute("href", str_replace("http://api.constantcontact.com", "", $list));
+					$contactLink->addAttribute("rel", "self");
 				}
 			}
 			$fromEmail = $campaign_node->addChild("FromEmail");
@@ -2092,22 +2092,22 @@
 			$sourceAuthor->addChild("name", $utility->getLogin());
 			$sourceNode->addChild("updated", date("Y-m-d").'T'.date("H:i:s").'+01:00');
 			$xmlReturn = $xml->asXML();
-			
+
 			return $xmlReturn;
 		}
 	}
 	/**
 	 * ListObj class defines a list object
-	 * 
+	 *
 	 * Defines a list object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTListObj
 	{
 		/**
 		* Construct function for the List Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a list object
 		* @return object list object with passed variables set to the object
 		*/
@@ -2122,7 +2122,7 @@
 			$this->setSortOrder($params['sort_order']);
 			$this->setUpdated($params['updated']);
 		}
-		
+
 		private $contactCount;
 		private $displayOnSignup;
 		private $id;
@@ -2143,7 +2143,7 @@
 
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { return $this->link; }
-		
+
 		public function setName( $value ) { $this->name = $value; }
 		public function getName() { return $this->name; }
 
@@ -2158,15 +2158,15 @@
 	}
 	/**
 	 * List Collection Class for calls to the list collection API
-	 * 
+	 *
 	 * Includes functions for listing lists, creating lists, and listing members in a list
-	 * 
+	 *
 	 */
 	class CTCTListsCollection
 	{
 		/**
 		* Public function that does a POST to the Lists collection, passing a list object
-		* 
+		*
 		* @param object $list - a valid list object with all required fields
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -2179,10 +2179,10 @@
 			$code = $return['info']['http_code'];
 			return $code;
 		}
-		
+
 		/**
 		* Public function that deletes a list from the account
-		* 
+		*
 		* @param object $list - a valid list object with a valid lists link
 		* @return string $code - returns success or fail code from API server
 		*/
@@ -2194,10 +2194,10 @@
 			$code = $return['info']['http_code'];
 			return code;
 		}
-		
+
 		/**
 		* Public function that gets list details of a single list object passed to it.
-		* 
+		*
 		* @param object $list - a valid list object with a valid list link
 		* @return object $list - returns list object with full details
 		*/
@@ -2218,7 +2218,7 @@
 		}
 		/**
 		* Public function that gets list members of a single list object passed to it.
-		* 
+		*
 		* @param object $list - a valid list object with a valid list link
 		* @return array $List - returns first 50 contact objects that are part of that list, and a link to next 50
 		*/
@@ -2228,13 +2228,13 @@
 			$call = $utility->getApiPath() . $list->getLink() . '/members';
 			$return = $utility->httpGet($call);
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
-			
+
+
 			$List = array();
-			
+
 			$listMembers = array();
 			$pages = array();
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$contact = new CTCTContact();
@@ -2244,13 +2244,13 @@
 				$contact->setEmailAddress($item->content->ContactListMember->EmailAddress);
 				$listMembers[] = $contact;
 			}
-			
+
 			$pages[] = $parsedReturn->link[2]->Attributes();
 			$pages[] = $parsedReturn->link[3]->Attributes();
 			//$pages[] = $parsedReturn->link[4]->Attributes();
-			
+
 			$List = array($listMembers, $pages);
-			
+
 			if (!$return)
 			{
 				return false;
@@ -2262,21 +2262,24 @@
 		}
 		/**
 		* Public function that gets a list of first 50 lists in the account
-		* 
+		*
 		* @return array $allLists - an array of two arrays, array 1 is list objects, array 2 is link for next 50 lists
 		*/
-		public function getLists()
-		{			
+		public function getLists($page = null)
+		{
 			$utility = new CTCTUtility();
-			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/lists');
+
+			// $page should look like `/ws/customers/example/lists?next=55`
+			$page = ($page) ? $page : '/ws/customers/'. $utility->getLogin() .'/lists';
+			$return = $utility->httpGet($utility->getApiPath() . $page);
 			$allLists = array();
-			
+
 			$Lists = array();
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml']);
 			$listArray = array();
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$listArray['link'] = ((string)$item->link->Attributes()->href);
@@ -2291,23 +2294,23 @@
 				$Lists[] = $list;
 			}
 
-			$pages[] = $parsedReturn->link[2]->Attributes();
-			$pages[] = $parsedReturn->link[3]->Attributes();
-			//$pages[] = $parsedReturn->link[4]->Attributes();
-			
+			$pages['next'] = $parsedReturn->link[2];
+			$pages['first'] = $parsedReturn->link[3];
+			$pages['current'] = $parsedReturn->link[4];
+
 			$allLists = array($Lists, $pages);
-			
+
 			return $allLists;
 		}
 		/**
 		* Public function that updates a list
-		* 
+		*
 		* @param string $listId - valid list ID of the list that needs to be updated
 		* @param object $list - valid list object of the new updates to the list
 		* @return string $code - success or fail message from the API server
 		*/
 		public function updateList($listId, $list)
-		{	
+		{
 			$utility = new CTCTUtility();
 			$existingList = $this->getListDetails($listId);
 			$listXml = $this->createListXml($existingList->getId(), $list);
@@ -2315,17 +2318,17 @@
 			$code = $return['info']['http_code'];
 			return $code;
 		}
-		
+
 		/**
 		* Private function that creates a list object from XML
-		* 
+		*
 		* @param string $listXml - Valid list XML
 		* @return object $listStruct - returns a valid list object
 		*/
 		private function createListStruct($listXml)
 		{
 			$parsedReturn = simplexml_load_string($listXml);
-			
+
 			$listArray['link'] = ($parsedReturn->link->Attributes()->href);
 			$listArray['id'] = ($parsedReturn->id);
 			$listArray['updated'] = ($parsedReturn->content->updated);
@@ -2339,7 +2342,7 @@
 		}
 		/**
 		* Private function that creates list XML
-		* 
+		*
 		* @param string $id - optional valid list ID, used for updating a list
 		* @param object $list - valid list object
 		* @return string $entry - valid XML of a list
@@ -2351,7 +2354,7 @@
 			if ( empty($id)) {
 				$id = "urn:uuid:E8553C09F4xcvxCCC53F481214230867087";
 			}
-			
+
 			$update_date = date("Y-m-d").'T'.date("H:i:s").'+01:00';
 			$xml_string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><entry xmlns='http://www.w3.org/2005/Atom'></entry>";
 			$xml_object = simplexml_load_string($xml_string);
@@ -2376,16 +2379,16 @@
 	}
 	/**
 	 * VerifiedAddress class
-	 * 
+	 *
 	 * Defines a verified address object, includes all verified address variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTVerifiedAddress
 	{
 		/**
 		* Construct function for the VerifiedAddress Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a verifiedaddress object
 		* @return object verifiedaddress object with passed variables set to the object
 		*/
@@ -2396,42 +2399,42 @@
 			$this->setEmailAddress($params['verified_email_address']);
 			$this->setStatus($params['verified_email_status']);
 			$this->setVerifiedTime($params['verified_time']);
-			
+
 			return $this;
 		}
-		
+
 		private $link;
 		private $id;
 		private $emailAddress;
 		private $status;
 		private $verifiedTime;
-		
+
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { $this->link; }
-		
+
 		public function setId( $value ) { $this->id = $value; }
 		public function getId() { $this->id; }
-		
+
 		public function setEmailAddress( $value ) { $this->emailAddress = $value; }
 		public function getEmailAddress() { $this->emailAddress; }
-		
+
 		public function setStatus( $value ) { $this->status = $value; }
 		public function getStatus() { $this->status; }
-		
+
 		public function setVerifiedTime( $value ) { $this->verifiedTime = $value; }
 		public function getVerifiedTime() { $this->verifiedTime; }
 	}
 	/**
 	 * Settings Collection Class for calls to the settings collection API
-	 * 
+	 *
 	 * Includes functions for listing all verified addresses in an account
-	 * 
+	 *
 	 */
 	class CTCTSettingsCollection
 	{
 		/**
 		* Public function that gets a list of first 50 verified addresses in the account
-		* 
+		*
 		* @return array $verifiedAddress - an array of two arrays, array 1 is verifiedaddress objects, array 2 is link for next 50 verified addresses
 		*/
 		public function listVerifiedAddresses()
@@ -2439,12 +2442,12 @@
 			$utility = new CTCTUtility();
 			$return = $utility->httpGet($utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/settings/emailaddresses');
 			$allAddresses = array();
-			
+
 			$addressList = array();
 			$pages = array();
 
 			$parsedReturn = simplexml_load_string($return['xml']);
-			
+
 			foreach ($parsedReturn->entry as $item)
 			{
 				$newAddress = $this->createVerifiedStruct($item);
@@ -2455,14 +2458,14 @@
 			{
 				$pages[] = $parsedReturn->link[2]->Attributes()->href;
 			}
-			
+
 			$allAddresses = array($addressList, $pages);
-			
+
 			return $allAddresses;
 		}
 		/**
 		* Private function that creates a verifiedaddress object from XML
-		* 
+		*
 		* @param string $parsedXml - Valid verifiedaddress XML
 		* @return object $verifiedAddress - returns a valid verifiedAddress object
 		*/
@@ -2481,16 +2484,16 @@
 	}
 	/**
 	 * Event class defines an event object
-	 * 
+	 *
 	 * Defines an event object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class CTCTEvent
 	{
 		/**
 		* Construct function for the Event Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a event object
 		* @return object event object with passed variables set to the object
 		*/
@@ -2528,7 +2531,7 @@
 			$this->setLateFeeDate($params['late_fee_date']);
 			$this->setGuestLimit($params['guest_limit']);
 			$this->setTicketing($params['ticketing']);
-			
+
 			if ($params['payment_options'])
 			{
 				foreach ($params['payment_options'] as $tmp)
@@ -2536,7 +2539,7 @@
 					$this->setPaymentOptions($tmp);
 				}
 			}
-			
+
 			if ($params['event_fees'])
 			{
 				foreach ($params['event_fees'] as $tmp)
@@ -2544,10 +2547,10 @@
 					$this->setEventFee($tmp);
 				}
 			}
-			
+
 			return $this;
 		}
-		
+
 		private $link;
 		private $name;
 		private $description;
@@ -2588,120 +2591,120 @@
 
 		public function setName( $value ) { $this->name = $value; }
 		public function getName() { return $this->name; }
-		
+
 		public function setDescription( $value ) { $this->description = $value; }
 		public function getDescription() { return $this->description; }
-		
+
 		public function setTitle( $value ) { $this->title = $value; }
 		public function getTitle() { return $this->title; }
-		
+
 		public function setRegistered( $value ) { $this->registered = $value; }
 		public function getRegistered() { return $this->registered; }
-		
+
 		public function setCreatedDate( $value ) { $this->createdDate = $value; }
 		public function getCreatedDate() { return $this->createdDate; }
-		
+
 		public function setStatus( $value ) { $this->status = $value; }
 		public function getStatus() { return $this->status; }
-		
+
 		public function setEventType( $value ) { $this->eventType = $value; }
 		public function getEventType() { return $this->eventType; }
-		
+
 		public function setLocation( $value ) { $this->location = $value; }
 		public function getLocation() { return $this->location; }
-		
+
 		public function setAddr1( $value ) { $this->addr1 = $value; }
 		public function getAddr1() { return $this->addr1; }
-		
+
 		public function setAddr2( $value ) { $this->addr2 = $value; }
 		public function getAddr2() { return $this->addr2; }
-		
+
 		public function setAddr3( $value ) { $this->addr3 = $value; }
 		public function getAddr3() { return $this->addr3; }
-		
+
 		public function setCity( $value ) { $this->city = $value; }
 		public function getCity() { return $this->city; }
-		
+
 		public function setState( $value ) { $this->state = $value; }
 		public function getState() { return $this->state; }
-		
+
 		public function setCountry( $value ) { $this->country = $value; }
 		public function getCountry() { return $this->country; }
-		
+
 		public function setPostalCode( $value ) { $this->postalCode = $value; }
 		public function getPostalCode() { return $this->postalCode; }
-		
+
 		public function setRegistrationUrl( $value ) { $this->regstrationUrl = $value; }
 		public function getRegistrationUrl() { return $this->regstrationUrl; }
-		
+
 		public function setStartDate( $value ) { $this->startDate = $value; }
 		public function getStartDate() { return $this->startDate; }
-		
+
 		public function setEndDate( $value ) { $this->EndDate = $value; }
 		public function getEndDate() { return $this->EndDate; }
-		
+
 		public function setPublishDate( $value ) { $this->publishDate = $value; }
 		public function getPublishDate() { return $this->publishDate; }
-		
+
 		public function setWebPage( $value ) { $this->webPage = $value; }
 		public function getWebPage() { return $this->webPage; }
-		
+
 		public function setAttendedCount( $value ) { $this->attendedCount = $value; }
 		public function getAttendedCount() { return $this->attendedCount; }
-		
+
 		public function setCancelledCount( $value ) { $this->cancelledCount = $value; }
 		public function getCancelledCount() { return $this->cancelledCount; }
-		
+
 		public function setEventFeeRequired( $value ) { $this->eventFeeRequired = $value; }
 		public function getEventFeeRequired() { return $this->eventFeeRequired; }
-		
+
 		public function setCurrencyType( $value ) { $this->currencyType = $value; }
 		public function getCurrencyType() { return $this->currencyType; }
-		
+
 		public function setPaymentOptions( $value ) { $this->paymentOptions[] = $value; }
 		public function getPaymentOptions() { return $this->paymentOptions; }
 
 		public function setRegistrationLimitDate( $value ) { $this->registrationLimitDate = $value; }
 		public function getRegistrationLimitDate() { return $this->registrationLimitDate; }
-		
+
 		public function setRegistrationLimitCount( $value ) { $this->registrationLimitCount = $value; }
 		public function getRegistrationLimitCount() { return $this->registrationLimitCount; }
-		
+
 		public function setRegistrationClosedManually( $value ) { $this->registrationClosedManually = $value; }
 		public function getRegistrationClosedManually() { return $this->registrationClosedManually; }
-		
+
 		public function setEarlyFeeDate( $value ) { $this->earlyFeeDate = $value; }
 		public function getEarlyFeeDate() { return $this->earlyFeeDate; }
-		
+
 		public function setLateFeeDate( $value ) { $this->lateFeeDate = $value; }
 		public function getLateFeeDate() { return $this->lateFeeDate; }
-		
+
 		public function setGuestLimit( $value ) { $this->guestLimit = $value; }
 		public function getGuestLimit() { return $this->guestLimit; }
-		
+
 		public function setTicketing( $value ) { $this->ticketing = $value; }
 		public function getTicketing() { return $this->ticketing; }
-		
+
 		public function setEventFee( $value ) { $this->eventFee[] = $value; }
 		public function getEventFee() { return $this->eventFee; }
 	}
 	/**
 	 * Registrant class defines a registrant object
-	 * 
+	 *
 	 * Defines a registrant object, includes all campaign variables as well as the
 	 * getters and setters for variables
-	 * 
+	 *
 	 */
 	class Registrant
 	{
 		/**
 		* Construct function for the Registrant Class
-		* 
+		*
 		* @param array $params - an array of variables that set up a registrant object
 		* @return object registrant object with passed variables set to the object
 		*/
 		public function __construct($params = array())
-		{	
+		{
 			$this->setLink($params['registrant_link']);
 			$this->setLastName($params['last_name']);
 			$this->setFirstName($params['first_name']);
@@ -2740,7 +2743,7 @@
 			$this->setOrderAmount($params['order_amount']);
 			$this->setCurrencyType($params['currency_type']);
 			$this->setPaymentType($params['payment_type']);
-		
+
 			if ($params['custom_field1'])
 			{
 				foreach ($params['custom_field1'] as $tmp)
@@ -2748,7 +2751,7 @@
 					$this->setCustomField1($tmp);
 				}
 			}
-			
+
 			if ($params['custom_field2'])
 			{
 				foreach ($params['custom_field2'] as $tmp)
@@ -2756,7 +2759,7 @@
 					$this->setCustomField2($tmp);
 				}
 			}
-			
+
 			if ($params['costs'])
 			{
 				foreach ($params['costs'] as $tmp)
@@ -2764,10 +2767,10 @@
 					$this->setCost($tmp);
 				}
 			}
-			
+
 			return $this;
 		}
-		
+
 		private $link;
 		private $lastName;
 		private $firstName;
@@ -2809,88 +2812,88 @@
 		private $currencyType;
 		private $paymentType;
 		private $costs = array();
-		
+
 		public function setLink( $value ) { $this->link = $value; }
 		public function getLink() { return $this->link; }
-		
+
 		public function setLastName( $value ) { $this->lastName = $value; }
 		public function getLastName() { return $this->lastName; }
-		
+
 		public function setFirstName( $value ) { $this->firstName = $value; }
 		public function getFirstName() { return $this->firstName; }
-		
+
 		public function setEmailAddress( $value ) { $this->emailAddress = $value; }
 		public function getEmailAddress() { return $this->emailAddress; }
-		
+
 		public function setPersonalLabel( $value ) { $this->personalLabel = $value; }
 		public function getPersonalLabel() { return $this->personalLabel; }
-		
+
 		public function setPersonalAddr1( $value ) { $this->personalAddr1 = $value; }
 		public function getPersonalAddr1() { return $this->personalAddr1; }
-		
+
 		public function setPersonalAddr2( $value ) { $this->personalAddr2 = $value; }
 		public function getPersonalAddr2() { return $this->personalAddr2; }
-		
+
 		public function setPersonalAddr3( $value ) { $this->personalAddr3 = $value; }
 		public function getPersonalAddr3() { return $this->personalAddr3; }
-		
+
 		public function setPersonalCity( $value ) { $this->personalCity = $value; }
 		public function getPersonalCity() { return $this->personalCity; }
-		
+
 		public function setPersonalState( $value ) { $this->personalState = $value; }
 		public function getPersonalState() { return $this->personalState; }
-		
+
 		public function setPersonalPostalCode( $value ) { $this->personalPostalCode = $value; }
 		public function getPersonalPostalCode() { return $this->personalPostalCode; }
-		
+
 		public function setPersonalProvince( $value ) { $this->personalProvince = $value; }
 		public function getPersonalProvince() { return $this->personalProvince; }
-		
+
 		public function setPersonalCountry( $value ) { $this->personalCountry = $value; }
 		public function getPersonalCountry() { return $this->personalCountry; }
-		
+
 		public function setPersonalPhone( $value ) { $this->personalPhone = $value; }
 		public function getPersonalPhone() { return $this->personalPhone; }
-		
+
 		public function setPersonalCellPhone( $value ) { $this->personalCellPhone = $value; }
 		public function getPersonalCellPhone() { return $this->personalCellPhone; }
-		
+
 		public function setBusinessLabel( $value ) { $this->businessLabel = $value; }
 		public function getBusinessLabel() { return $this->businessLabel; }
-		
+
 		public function setBusinessCompany( $value ) { $this->businessCompany = $value; }
 		public function getBusinessCompany() { return $this->businessCompany; }
-		
+
 		public function setBusinessJobTitle( $value ) { $this->businessJobTitle = $value; }
 		public function getBusinessJobTitle() { return $this->businessJobTitle; }
-		
+
 		public function setBusinessDepartment( $value ) { $this->businessDepartment = $value; }
 		public function getBusinessDepartment() { return $this->businessDepartment; }
-		
+
 		public function setBusinessAddr1( $value ) { $this->businessAddr1 = $value; }
 		public function getBusinessAddr1() { return $this->businessAddr1; }
-		
+
 		public function setBusinessAddr2( $value ) { $this->businessAddr2 = $value; }
 		public function getBusinessAddr2() { return $this->businessAddr2; }
-		
+
 		public function setBusinessAddr3( $value ) { $this->businessAddr3 = $value; }
 		public function getBusinessAddr3() { return $this->businessAddr3; }
-		
+
 		public function setBusinessCity( $value ) { $this->businessCity = $value; }
 		public function getBusinessCity() { return $this->businessCity; }
-		
+
 		public function setBusinessState( $value ) { $this->businessState = $value; }
 		public function getBusinessState() { return $this->businessState; }
-		
+
 		public function setBusinessPostalCode( $value ) { $this->businessPostalCode = $value; }
 		public function getBusinessPostalCode() { return $this->businessPostalCode; }
-		
+
 		public function setBusinessProvince( $value ) { $this->businessProvince = $value; }
 		public function getBusinessProvince() { return $this->businessProvince; }
-		
+
 		public function setBusinessCountry( $value ) { $this->businessCountry = $value; }
 		public function getBusinessCountry() { return $this->businessCountry; }
-		
+
 		public function setBusinessPhone( $value ) { $this->businessPhone = $value; }
 		public function getBusinessPhone() { return $this->businessPhone; }
 
@@ -2926,28 +2929,28 @@
 
 		public function setPaymentType( $value ) { $this->paymentType = $value; }
 		public function getPaymentType() { return $this->paymentType; }
-		
+
 		public function setCost( $value ) { $this->costs[] = $value; }
 		public function getCost() { return $this->costs; }
-		
+
 		public function setCustomField1( $value ) { $this->customField1[] = $value; }
 		public function getCustomField1() { return $this->customField1; }
-		
+
 		public function setCustomField2( $value ) { $this->customField2[] = $value; }
 		public function getCustomField2() { return $this->customField2; }
 	}
 	/**
 	 * Event Collection Class for calls to the event collection API
-	 * 
+	 *
 	 * Includes functions for listing all events within the account, specific event details,
 	 * also listing registrants and registrant details.
-	 * 
+	 *
 	 */
 	class CTCTEventCollection
 	{
 		/**
 		* Public function that gets a list of first 50 events in the account
-		* 
+		*
 		* @return array $allEvents - an array of two arrays, array 1 is event objects, array 2 is link for next 50 events
 		*/
 		public function listEvents()
@@ -2960,7 +2963,7 @@
 			$eventList = array();
 			$pages = array();
 			$xml = simplexml_load_string($returnedXml);
-			
+
 			foreach ($xml->entry as $item)
 			{
 				$eventArray['event_link'] = ($item->link['href']);
@@ -2993,14 +2996,14 @@
 			{
 				$pages[] = $xml->link[2]->Attributes()->href;
 			}
-			
+
 			$allEvents= array($eventList, $pages);
-			
+
 			return $allEvents;
 		}
 		/**
 		* Public function that gets event details of a single event object passed to it.
-		* 
+		*
 		* @param object $event - a valid event object with a valid event link
 		* @return object $event - returns event object with full details
 		*/
@@ -3021,7 +3024,7 @@
 		}
 		/**
 		* Public function that gets a list of first 50 registrants in an event
-		* 
+		*
 		* @param object $event - a valid event object with a valid event link
 		* @return array $allRegistrants - an array of two arrays, array 1 is registrant objects, array 2 is link for next 50 registrant
 		*/
@@ -3035,7 +3038,7 @@
 			$registrantList = array();
 			$pages = array();
 			$xml = simplexml_load_string($returnedXml);
-			
+
 			foreach ($xml->entry as $item)
 			{
 				$registrantArray['registrant_link'] = ($item->link['href']);
@@ -3054,14 +3057,14 @@
 			{
 				$pages[] = $xml->link[2]->Attributes()->href;
 			}
-			
+
 			$allRegistrants = array($registrantList, $pages);
-			
+
 			return $allRegistrants;
 		}
 		/**
 		* Public function that gets event details of a single event object passed to it.
-		* 
+		*
 		* @param object $registrant - a valid registrant object with a valid registrant link
 		* @return object $registrant - returns registrant object with full details
 		*/
@@ -3082,7 +3085,7 @@
 		}
 		/**
 		* Private function that creates an event object from XML
-		* 
+		*
 		* @param string $eventXml - Valid event XML
 		* @return object $eventStruct - returns a valid event object
 		*/
@@ -3123,7 +3126,7 @@
 			$eventArray['late_fee_date'] = ($parsedReturn->content->Event->RegistrationTypes->RegistrationType->LateFeeDate);
 			$eventArray['guest_limit'] = ($parsedReturn->content->Event->RegistrationTypes->RegistrationType->GuestLimit);
 			$eventArray['ticketing'] = ($parsedReturn->content->Event->RegistrationTypes->RegistrationType->Ticketing);
-			
+
 			if ($parsedReturn->content->Event->PaymentOptions)
 			{
 				foreach ($parsedReturn->content->Event->PaymentOptions->PaymentOption as $item)
@@ -3149,7 +3152,7 @@
 					}
 				}
 			}
-			
+
 			if ($parsedReturn->content->Event->RegistrationTypes->RegistrationType->EventFees)
 			{
 				$int = 1;
@@ -3165,11 +3168,11 @@
 			}
 			$eventStruct = new CTCTEvent($eventArray);
 			return $eventStruct;
-			
+
 		}
 		/**
 		* Private function that creates an registrant object from XML
-		* 
+		*
 		* @param string $registrantXml - Valid registrant XML
 		* @return object $registrantStruct - returns a valid registrant object
 		*/
@@ -3216,7 +3219,7 @@
 			$registrantArray['order_amount'] = ($parsedReturn->content->Registrant->OrderAmount);
 			$registrantArray['currency_type'] = ($parsedReturn->content->Registrant->CurrencyType);
 			$registrantArray['payment_type'] = ($parsedReturn->content->Registrant->PaymentType);
-			
+
 			if ($parsedReturn->content->Registrant->CustomInformation1)
 			{
 				$int = 1;
@@ -3247,7 +3250,7 @@
 					$registrantArray['costs']['cost' . $int]['FeeType'] = (trim((string) $item->FeeType));
 					$registrantArray['costs']['cost' . $int]['Rate'] = (trim((string) $item->Rate));
 					$registrantArray['costs']['cost' . $int]['Total'] = (trim((string) $item->Total));
-					
+
 				}
 			}
 			$registrantStruct = new Registrant($registrantArray);

@@ -15,7 +15,17 @@ Easily integrate Constant Contact with the Contact Form 7 plugin.
 
 Automatically add contact form submissions to Constant Contact lists that you choose! The plugin settings are configured on a per-form basis on the Contact Form 7 form configuration pages.
 
-### Features
+### Get linked with Constant Contact in 60 seconds!
+This plugin is very easy to get set up. The instructions are simple: 
+
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Go to Contact > Constant Contact menu in the WordPress sidebar
+1. Enter your Constant Contact login information
+1. Configure the Constant Contact section on the Contact Form 7 "Edit" form page
+
+...and you're done!
+
+#### Features
 * Add contacts to multiple lists at once
 * Sync form fields to Constant Contact fields, including your Custom Fields
 * Add a newsletter opt-in checkbox to your form (see <a href="http://wordpress.org/extend/plugins/contact-form-7-newsletter/faq/">plugin FAQs</a> to learn how)

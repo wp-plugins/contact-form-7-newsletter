@@ -42,7 +42,7 @@
 			$this->setActionBy('ACTION_BY_CONTACT');
 
 			/* DO NOT CHANGE! It will break the plugin if changed. */
-			$this->setApiKey('a9f642af-8f34-43b2-8882-00e6aaebfa46');
+			$this->setApiKey('23702516-ed98-44ff-9a49-85ab486d6039');
 			$this->setApiPath('https://api.constantcontact.com');
 			$this->setLogin(CTCTCF7::get_username());
 			$this->setPassword(CTCTCF7::get_password());

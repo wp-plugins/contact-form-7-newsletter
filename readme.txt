@@ -1,4 +1,4 @@
-=== Contact Form 7 - Constant Contact Module ===
+=== Contact Form 7 Newsletter ===
 Contributors: katzwebservices, katzwebdesign
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing

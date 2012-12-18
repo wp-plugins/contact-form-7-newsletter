@@ -85,7 +85,7 @@ class CTCT_SuperClass extends CTCTUtility {
 		}
 
 		if(isset($Lists[1]['next'])) {
-			$page = self::findNextLink(&$Lists[1]['next']);
+			$page = self::findNextLink($Lists[1]['next']);
 		}
 
 		if($page) {
@@ -113,7 +113,7 @@ class CTCT_SuperClass extends CTCTUtility {
 		return $outputLists;
 	}
 
-	public static function findNextLink($item){
+	public static function findNextLink(&$item){
         $nextLink = $item->xpath("//*[@rel='next']");
         return ($nextLink) ? (string) $nextLink[0]->Attributes()->href : false;
     }

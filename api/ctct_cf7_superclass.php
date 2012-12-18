@@ -7,44 +7,14 @@ class CTCT_SuperClass extends CTCTUtility {
 	}
 
 	public function updateSettings($object = false) {
-		$settings = get_option("ctct_cf7");
-		$object->login = trim($settings['username']);
-        $object->password = trim($settings['password']);
-		$object->apiPath = str_replace('USERNAME', '', (string)$object->apiPath).trim($settings['username']);
-		$object->actionBy = 'ACTION_BY_CONTACT';
-		$object->requestLogin = $object->apikey.'%'.$object->login.':'.$object->password;
-		$object->curl_debug = true;
-	}
-
-	public function listSubscribe($id, $merge_vars, $email_type='html') {
-        $params = $merge_vars;
-
-        foreach($params as $key => $p) {
-        	$p = trim($p);
-        	if(empty($p) && $p != '0') {
-        		unset($params[$key]);
-        	}
-        }
-
-        $params["lists"] = array($id); //array(preg_replace('/(?:.*?)\/lists\/(\d+)/ism','$1',$id));
-        $params['mail_type'] = strtolower($params['mail_type']);
-        if($params['mail_type'] != 'html' && $params['mail_type'] != 'text') {
-        	$params['mail_type'] = 'html';
-        }
-
-        // Check if email already exists; update if it does
-        if($existingID = self::CC_Contact()->subscriberExists($params['email_address'])) {
-        	$contactXML = self::CC_Contact()->createContactXML((string)$existingID,$params);
-        	$contactXML = (string)$contactXML;
-        	$return = self::CC_Contact()->editSubscriber((string)$existingID, $contactXML);
-        } else {
-        	$contactXML = self::CC_Contact()->createContactXML(null,$params);
-        	$contactXML = (string)$contactXML;
-        	$return = self::CC_Contact()->addSubscriber($contactXML);
-        }
-
-        return $return;
-
+		if(is_a($object,'CTCTUtility')) {
+			$settings = get_option("ctct_cf7");
+			$object->login = trim($settings['username']);
+	        $object->password = trim($settings['password']);
+			$object->apiPath = str_replace('USERNAME', '', (string)$object->apiPath).trim($settings['username']);
+			$object->actionBy = 'ACTION_BY_CONTACT';
+			$object->requestLogin = $object->apikey.'%'.$object->login.':'.$object->password;
+		}
 	}
 
 	public function CC_List() {
@@ -85,7 +55,6 @@ class CTCT_SuperClass extends CTCTUtility {
 
 	public function getAvailableLists() {
 		$lists = self::getAllLists();
-
 		foreach ($lists as $key => $list) {
 			if(!is_numeric($list['id'])) {
 				unset($lists[$key]);
@@ -97,15 +66,13 @@ class CTCT_SuperClass extends CTCTUtility {
 		$id = preg_replace('/.*?\/contacts\/(.+)/ism', '$1', $Contact->getId());
 		return $id;
 	}
-	public function getAllLists() {
 
-		$ctct_cf7_alllists = get_site_transient('ctct_cf7_alllists');
-		if($ctct_cf7_alllists && is_array($ctct_cf7_alllists) && !is_wp_error($ctct_cf7_alllists) && (!isset($_GET['cache']) && !isset($_GET['refresh']))) {
-			return $ctct_cf7_alllists;
-		}
-		$Lists = self::CC_ListsCollection()->getLists();
+	private function getLists($page = null, $outputLists = array()) {
+
+		$Lists = self::CC_ListsCollection()->getLists($page);
+
 		if(!$Lists || empty($Lists)) { return array(); }
-		$outputLists = array();
+
 		foreach($Lists[0] as $List) {
 			$listid = preg_replace('/.*?\/lists\/(.+)/ism', '$1', $List->getLink());
 			$vars = array(
@@ -117,14 +84,44 @@ class CTCT_SuperClass extends CTCTUtility {
 			$outputLists[$listid] = $vars;
 		}
 
-		set_site_transient('ctct_cf7_alllists', $outputLists, 60*60*24);
+		if(isset($Lists[1]['next'])) {
+			$page = self::findNextLink(&$Lists[1]['next']);
+		}
+
+		if($page) {
+			$outputLists = self::getLists($page, $outputLists);
+		}
 
 		return $outputLists;
 	}
 
+	public function getAllLists() {
+
+		$ctct_cf7_alllists = get_site_transient('ctct_cf7_alllists');
+
+		if($ctct_cf7_alllists && is_array($ctct_cf7_alllists) && !is_wp_error($ctct_cf7_alllists) && (!isset($_GET['cache']) && !isset($_GET['refresh']))) {
+			return $ctct_cf7_alllists;
+		}
+
+
+		$outputLists = self::getLists();
+
+		if(!empty($outputLists)) {
+			set_site_transient('ctct_cf7_alllists', $outputLists, 60*60*24);
+		}
+
+		return $outputLists;
+	}
+
+	public static function findNextLink($item){
+        $nextLink = $item->xpath("//*[@rel='next']");
+        return ($nextLink) ? (string) $nextLink[0]->Attributes()->href : false;
+    }
+
 	public function listMergeVars() {
 		return array(
 			array('tag'=>'email_address', 'req' => true, 'name' => "Email Address", 'placeholder' => '[your-email]'),
+			array('tag'=>'full_name', 	  'req' => false, 'name' => "Full Name"),
 			array('tag'=>'first_name', 	  'req' => false, 'name' => "First Name"),
 			array('tag'=>'middle_name',   'req' => false, 'name' => "Middle Name"),
 			array('tag'=>'last_name',	  'req' => false, 'name' => "Last Name"),

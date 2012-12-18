@@ -380,18 +380,18 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setLink($params['link']);
-			$this->setId($params['id']);
-			$this->setUpdated($params['updated']);
-			$this->setType($params['type']);
-			$this->setActivityTitle($params['activity_title']);
-			$this->setStatus($params['status']);
-			$this->setTransactionCount($params['transaction_count']);
-			$this->setRunStartTime($params['run_start_time']);
-			$this->setRunFinishTime($params['run_finish_time']);
-			$this->setFileName($params['file_name']);
-			$this->setErrorCount($params['error_count']);
-			if ($params['errors'])
+			$this->setLink(@$params['link']);
+			$this->setId(@$params['id']);
+			$this->setUpdated(@$params['updated']);
+			$this->setType(@$params['type']);
+			$this->setActivityTitle(@$params['activity_title']);
+			$this->setStatus(@$params['status']);
+			$this->setTransactionCount(@$params['transaction_count']);
+			$this->setRunStartTime(@$params['run_start_time']);
+			$this->setRunFinishTime(@$params['run_finish_time']);
+			$this->setFileName(@$params['file_name']);
+			$this->setErrorCount(@$params['error_count']);
+			if (@$params['errors'])
 			{
 				foreach ($params['errors'] as $tmp)
 				{
@@ -681,9 +681,9 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setFolderLink($params['folderLink']);
-			$this->setFolderId($params['folderId']);
-			$this->setFolderName($params['folderName']);
+			$this->setFolderLink(@$params['folderLink']);
+			$this->setFolderId(@$params['folderId']);
+			$this->setFolderName(@$params['folderName']);
 
 			return $this;
 		}
@@ -718,18 +718,18 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setLink($params['image_link']);
-			$this->setFileName($params['file_name']);
-			$this->setImageUrl($params['image_url']);
-			$this->setHeight($params['image_height']);
-			$this->setWidth($params['image_width']);
-			$this->setDescription($params['description']);
-			$this->setMd5Hash($params['MD5Hash']);
-			$this->setFileSize($params['file_size']);
-			$this->setUpdated($params['last_updated']);
-			$this->setFileType($params['file_type']);
+			$this->setLink(@$params['image_link']);
+			$this->setFileName(@$params['file_name']);
+			$this->setImageUrl(@$params['image_url']);
+			$this->setHeight(@$params['image_height']);
+			$this->setWidth(@$params['image_width']);
+			$this->setDescription(@$params['description']);
+			$this->setMd5Hash(@$params['MD5Hash']);
+			$this->setFileSize(@$params['file_size']);
+			$this->setUpdated(@$params['last_updated']);
+			$this->setFileType(@$params['file_type']);
 
-			if ($params['image_usage'])
+			if (@$params['image_usage'])
 			{
 				foreach ($params['image_usage'] as $tmp)
 				{
@@ -800,14 +800,16 @@
 		* @param object $contact - a valid contact object with all required fields
 		* @return string $code - returns success or fail code from API server
 		*/
-		public function createContact($contact)
+		public function createContact($contact, $return_code = true)
 		{
 			$utility = new CTCTUtility();
 			$call = $utility->getApiPath() . '/ws/customers/'. $utility->getLogin() .'/contacts';
 			$contactStruct = $this->createContactXml(null, $contact);
 			$return = $utility->httpPost($call, $contactStruct);
-			$code = $return['info']['http_code'];
-			return $code;
+			if($return_code) {
+				$return = $return['info']['http_code'];
+			}
+			return $return;
 		}
 		/**
 		* Public function that deletes a contact, sending the contact to the Do Not Mail List
@@ -1065,14 +1067,16 @@
 		* @param object $contact - valid contact object of the new updates to the contact
 		* @return string $code - success or fail message from the API server
 		*/
-		public function updateContact($contactId, $contact)
+		public function updateContact($contactId, $contact, $return_code = true)
 		{
 			$utility = new CTCTUtility();
 			$existingContact = $this->listContactDetails($contact);
 			$contactXml = $this->createContactXml($existingContact->getId(), $contact);
 			$return = $utility->httpPut($utility->getApiPath() . $existingContact->getLink(), $contactXml);
-			$code = $return['info']['http_code'];
-			return $code;
+			if($return_code) {
+				$return = $return['info']['http_code'];
+			}
+			return $return;
 		}
 		/**
 		* Private function that creates a contact object from XML
@@ -1091,7 +1095,7 @@
 			$fullContact['last_name'] = ($parsedReturn->content->Contact->LastName);
 			$fullContact['middle_name'] = ($parsedReturn->content->Contact->MiddleName);
 			$fullContact['company_name'] = ($parsedReturn->content->Contact->CompanyName);
-			$fullContact['job_title'] = ($parsedReturn->cokntent->Contact->JobTitle);
+			$fullContact['job_title'] = ($parsedReturn->content->Contact->JobTitle);
 			$fullContact['home_number'] = ($parsedReturn->content->Contact->HomePhone);
 			$fullContact['work_number'] = ($parsedReturn->content->Contact->WorkPhone);
 			$fullContact['address_line_1'] = ($parsedReturn->content->Contact->Addr1);
@@ -1103,21 +1107,21 @@
 			$fullContact['country_code'] = ($parsedReturn->content->Contact->CountryCode);
 			$fullContact['zip_code'] = ($parsedReturn->content->Contact->PostalCode);
 			$fullContact['sub_zip_code'] = ($parsedReturn->content->Contact->SubPostalCode);
-			$fullContact['custom_field_1'] = ($parsedReturn->content->Contact->$customField1);
-			$fullContact['custom_field_2'] = ($parsedReturn->content->Contact->$customField2);
-			$fullContact['custom_field_3'] = ($parsedReturn->content->Contact->$customField3);
-			$fullContact['custom_field_4'] = ($parsedReturn->content->Contact->$customField4);
-			$fullContact['custom_field_5'] = ($parsedReturn->content->Contact->$customField5);
-			$fullContact['custom_field_6'] = ($parsedReturn->content->Contact->$customField6);
-			$fullContact['custom_field_7'] = ($parsedReturn->content->Contact->$customField7);
-			$fullContact['custom_field_8'] = ($parsedReturn->content->Contact->$customField8);
-			$fullContact['custom_field_9'] = ($parsedReturn->content->Contact->$customField9);
-			$fullContact['custom_field_10'] = ($parsedReturn->content->Contact->$customField10);
-			$fullContact['custom_field_11'] = ($parsedReturn->content->Contact->$customField11);
-			$fullContact['custom_field_12'] = ($parsedReturn->content->Contact->$customField12);
-			$fullContact['custom_field_13'] = ($parsedReturn->content->Contact->$customField13);
-			$fullContact['custom_field_14'] = ($parsedReturn->content->Contact->$customField14);
-			$fullContact['custom_field_15'] = ($parsedReturn->content->Contact->$customField15);
+			$fullContact['custom_field_1'] = ($parsedReturn->content->Contact->customField1);
+			$fullContact['custom_field_2'] = ($parsedReturn->content->Contact->customField2);
+			$fullContact['custom_field_3'] = ($parsedReturn->content->Contact->customField3);
+			$fullContact['custom_field_4'] = ($parsedReturn->content->Contact->customField4);
+			$fullContact['custom_field_5'] = ($parsedReturn->content->Contact->customField5);
+			$fullContact['custom_field_6'] = ($parsedReturn->content->Contact->customField6);
+			$fullContact['custom_field_7'] = ($parsedReturn->content->Contact->customField7);
+			$fullContact['custom_field_8'] = ($parsedReturn->content->Contact->customField8);
+			$fullContact['custom_field_9'] = ($parsedReturn->content->Contact->customField9);
+			$fullContact['custom_field_10'] = ($parsedReturn->content->Contact->customField10);
+			$fullContact['custom_field_11'] = ($parsedReturn->content->Contact->customField11);
+			$fullContact['custom_field_12'] = ($parsedReturn->content->Contact->customField12);
+			$fullContact['custom_field_13'] = ($parsedReturn->content->Contact->customField13);
+			$fullContact['custom_field_14'] = ($parsedReturn->content->Contact->customField14);
+			$fullContact['custom_field_15'] = ($parsedReturn->content->Contact->customField15);
 			$fullContact['notes'] = ($parsedReturn->content->Contact->Note);
 			$fullContact['mail_type'] = ($parsedReturn->content->Contact->EmailType);
 			$fullContact['status'] = ($parsedReturn->content->Contact->Status);
@@ -1168,12 +1172,6 @@
 			$lname_node = $contact_node->addChild("MiddleName", urldecode(htmlspecialchars(($contact->getMiddleName()), ENT_QUOTES, 'UTF-8')));
 			$lname_node = $contact_node->addChild("CompanyName", urldecode(htmlspecialchars(($contact->getCompanyName()), ENT_QUOTES, 'UTF-8')));
 			$lname_node = $contact_node->addChild("JobTitle", urldecode(htmlspecialchars(($contact->getJobTitle()), ENT_QUOTES, 'UTF-8')));
-
-			if ($params['status'] == 'Do Not Mail')
-			{
-				$utility->setActionBy('ACTION_BY_CONTACT');
-			}
-
 			$optin_node = $contact_node->addChild("OptInSource", htmlspecialchars($utility->getActionBy()));
 			$hn_node = $contact_node->addChild("HomePhone", htmlspecialchars($contact->getHomeNumber(), ENT_QUOTES, 'UTF-8'));
 			$wn_node = $contact_node->addChild("WorkPhone", htmlspecialchars($contact->getWorkNumber(), ENT_QUOTES, 'UTF-8'));
@@ -1234,51 +1232,51 @@
 		public function __construct($params = array())
 		{
 			$utility = new CTCTUtility();
-			if ($params['status'] == 'Do Not Mail')
+			if (@$params['status'] == 'Do Not Mail')
 			{
 				$utility->setActionBy('ACTION_BY_CONTACT');
 			}
-			$this->setLink($params['link']);
-			$this->setId($params['id']);
-			$this->setEmailAddress($params['email_address']);
-			$this->setFirstName($params['first_name']);
-			$this->setMiddleName($params['middle_name']);
-			$this->setLastName($params['last_name']);
-			$this->setCompanyName($params['company_name']);
-			$this->setJobTitle($params['job_title']);
-			$this->setHomeNumber($params['home_number']);
-			$this->setWorkNumber($params['work_number']);
-			$this->setAddr1($params['address_line_1']);
-			$this->setAddr2($params['address_line_2']);
-			$this->setAddr3($params['address_line_3']);
-			$this->setCity($params['city_name']);
-			$this->setStateCode($params['state_code']);
-			$this->setStateName($params['state_name']);
-			$this->setCountryCode($params['country_code']);
-			$this->setPostalCode($params['zip_code']);
-			$this->setSubPostalCode($params['sub_zip_code']);
-			$this->setNotes($params['notes']);
-			$this->setCustomField1($params['custom_field_1']);
-			$this->setCustomField2($params['custom_field_2']);
-			$this->setCustomField3($params['custom_field_3']);
-			$this->setCustomField4($params['custom_field_4']);
-			$this->setCustomField5($params['custom_field_5']);
-			$this->setCustomField6($params['custom_field_6']);
-			$this->setCustomField7($params['custom_field_7']);
-			$this->setCustomField8($params['custom_field_8']);
-			$this->setCustomField9($params['custom_field_9']);
-			$this->setCustomField10($params['custom_field_10']);
-			$this->setCustomField11($params['custom_field_11']);
-			$this->setCustomField12($params['custom_field_12']);
-			$this->setCustomField13($params['custom_field_13']);
-			$this->setCustomField14($params['custom_field_14']);
-			$this->setCustomField15($params['custom_field_15']);
-			$this->setEmailType($params['mail_type']);
+			$this->setLink(@$params['link']);
+			$this->setId(@$params['id']);
+			$this->setEmailAddress(@$params['email_address']);
+			$this->setFirstName(@$params['first_name']);
+			$this->setMiddleName(@$params['middle_name']);
+			$this->setLastName(@$params['last_name']);
+			$this->setCompanyName(@$params['company_name']);
+			$this->setJobTitle(@$params['job_title']);
+			$this->setHomeNumber(@$params['home_number']);
+			$this->setWorkNumber(@$params['work_number']);
+			$this->setAddr1(@$params['address_line_1']);
+			$this->setAddr2(@$params['address_line_2']);
+			$this->setAddr3(@$params['address_line_3']);
+			$this->setCity(@$params['city_name']);
+			$this->setStateCode(@$params['state_code']);
+			$this->setStateName(@$params['state_name']);
+			$this->setCountryCode(@$params['country_code']);
+			$this->setPostalCode(@$params['zip_code']);
+			$this->setSubPostalCode(@$params['sub_zip_code']);
+			$this->setNotes(@$params['notes']);
+			$this->setCustomField1(@$params['custom_field_1']);
+			$this->setCustomField2(@$params['custom_field_2']);
+			$this->setCustomField3(@$params['custom_field_3']);
+			$this->setCustomField4(@$params['custom_field_4']);
+			$this->setCustomField5(@$params['custom_field_5']);
+			$this->setCustomField6(@$params['custom_field_6']);
+			$this->setCustomField7(@$params['custom_field_7']);
+			$this->setCustomField8(@$params['custom_field_8']);
+			$this->setCustomField9(@$params['custom_field_9']);
+			$this->setCustomField10(@$params['custom_field_10']);
+			$this->setCustomField11(@$params['custom_field_11']);
+			$this->setCustomField12(@$params['custom_field_12']);
+			$this->setCustomField13(@$params['custom_field_13']);
+			$this->setCustomField14(@$params['custom_field_14']);
+			$this->setCustomField15(@$params['custom_field_15']);
+			$this->setEmailType(@$params['mail_type']);
 			$this->setOptInSource($utility->getActionBy());
 
-			if ($params['lists'])
+			if (@$params['lists'])
 			{
-				foreach ($params['lists'] as $tmp)
+				foreach (@$params['lists'] as $tmp)
 				{
 					$this->setLists($tmp);
 				}
@@ -1500,49 +1498,49 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setId($params['id']);
-			$this->setLink($params['link']);
-			$this->setCampaignName($params['campaign_name']);
-			$this->setStatus($params['status']);
-			$this->setCampaignDate($params['campaign_date']);
-			$this->setLastEditDate($params['last_edit_date']);
-			$this->setCampaignSent($params['campaign_sent']);
-			$this->setCampaignOpens($params['campaign_opens']);
-			$this->setCampaignClicks($params['campaign_clicks']);
-			$this->setCampaignBounces($params['campaign_bounces']);
-			$this->setCampaignForwards($params['campaign_forwards']);
-			$this->setCampaignOptOuts($params['campaign_optouts']);
-			$this->setCampaignSpamReports($params['campaign_spamreports']);
-			$this->setSubject($params['subject']);
-			$this->setFromName($params['from_name']);
-			$this->setCampaignType($params['campaign_type']);
-			$this->setVawp($params['view_as_web_page']);
-			$this->setVawpLinkText($params['vawp_link_text']);
-			$this->setVawpText($params['vawp_text']);
-			$this->setPermissionReminder($params['permission_reminder']);
-			$this->setPermissionReminderText($params['permission_reminder_txt']);
-			$this->setGreetingSalutation($params['greeting_salutation']);
-			$this->setGreetingName($params['greeting_name']);
-			$this->setGreetingString($params['greeting_string']);
-			$this->setOrgName($params['org_name']);
-			$this->setOrgAddr1($params['org_address_1']);
-			$this->setOrgAddr2($params['org_address_2']);
-			$this->setOrgAddr3($params['org_address_3']);
-			$this->setOrgCity($params['org_city']);
-			$this->setOrgState($params['org_state']);
-			$this->setOrgInternationalState($params['org_international_state']);
-			$this->setOrgCountry($params['org_country']);
-			$this->setOrgPostalCode($params['org_postal_code']);
-			$this->setIncForwardEmail($params['include_forward_email']);
-			$this->setForwardEmailLinkText($params['forward_email_link_text']);
-			$this->setIncSubscribeLink($params['include_subscribe_link']);
-			$this->setSubscribeLinkText($params['subscribe_link_text']);
-			$this->setEmailContentFormat($params['email_content_format']);
-			$this->setEmailContent($params['email_content']);
-			$this->setTextVersionContent($params['text_version_content']);
-			$this->setStyleSheet($params['style_sheet']);
+			$this->setId(@$params['id']);
+			$this->setLink(@$params['link']);
+			$this->setCampaignName(@$params['campaign_name']);
+			$this->setStatus(@$params['status']);
+			$this->setCampaignDate(@$params['campaign_date']);
+			$this->setLastEditDate(@$params['last_edit_date']);
+			$this->setCampaignSent(@$params['campaign_sent']);
+			$this->setCampaignOpens(@$params['campaign_opens']);
+			$this->setCampaignClicks(@$params['campaign_clicks']);
+			$this->setCampaignBounces(@$params['campaign_bounces']);
+			$this->setCampaignForwards(@$params['campaign_forwards']);
+			$this->setCampaignOptOuts(@$params['campaign_optouts']);
+			$this->setCampaignSpamReports(@$params['campaign_spamreports']);
+			$this->setSubject(@$params['subject']);
+			$this->setFromName(@$params['from_name']);
+			$this->setCampaignType(@$params['campaign_type']);
+			$this->setVawp(@$params['view_as_web_page']);
+			$this->setVawpLinkText(@$params['vawp_link_text']);
+			$this->setVawpText(@$params['vawp_text']);
+			$this->setPermissionReminder(@$params['permission_reminder']);
+			$this->setPermissionReminderText(@$params['permission_reminder_txt']);
+			$this->setGreetingSalutation(@$params['greeting_salutation']);
+			$this->setGreetingName(@$params['greeting_name']);
+			$this->setGreetingString(@$params['greeting_string']);
+			$this->setOrgName(@$params['org_name']);
+			$this->setOrgAddr1(@$params['org_address_1']);
+			$this->setOrgAddr2(@$params['org_address_2']);
+			$this->setOrgAddr3(@$params['org_address_3']);
+			$this->setOrgCity(@$params['org_city']);
+			$this->setOrgState(@$params['org_state']);
+			$this->setOrgInternationalState(@$params['org_international_state']);
+			$this->setOrgCountry(@$params['org_country']);
+			$this->setOrgPostalCode(@$params['org_postal_code']);
+			$this->setIncForwardEmail(@$params['include_forward_email']);
+			$this->setForwardEmailLinkText(@$params['forward_email_link_text']);
+			$this->setIncSubscribeLink(@$params['include_subscribe_link']);
+			$this->setSubscribeLinkText(@$params['subscribe_link_text']);
+			$this->setEmailContentFormat(@$params['email_content_format']);
+			$this->setEmailContent(@$params['email_content']);
+			$this->setTextVersionContent(@$params['text_version_content']);
+			$this->setStyleSheet(@$params['style_sheet']);
 
-			if ($params['lists'])
+			if (!empty($params['lists']))
 			{
 				foreach ($params['lists'] as $tmp)
 				{
@@ -1551,13 +1549,13 @@
 			}
 			//From and Reply Addresses must be Verified addresses
 			//These can be used from getVerifiedAddresses() in the settingsCollection class
-			$this->setFromEmailAddress($params['frm_addr']);
-			$this->setFromEmailAddressLink($params['frm_addr_link']);
-			$this->setReplyEmailAddress($params['rep_addr']);
-			$this->setReplyEmailAddressLink($params['rep_addr_link']);
+			$this->setFromEmailAddress(@$params['frm_addr']);
+			$this->setFromEmailAddressLink(@$params['frm_addr_link']);
+			$this->setReplyEmailAddress(@$params['rep_addr']);
+			$this->setReplyEmailAddressLink(@$params['rep_addr_link']);
 
-			$this->setArchiveStatus($params['archive_status']);
-			$this->setArchiveUrl($params['archive_url']);
+			$this->setArchiveStatus(@$params['archive_status']);
+			$this->setArchiveUrl(@$params['archive_url']);
 
 			return $this;
 		}
@@ -2113,14 +2111,14 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setContactCount($params['contact_count']);
-			$this->setDisplayOnSignup($params['display_on_signup']);
-			$this->setId($params['id']);
-			$this->setLink($params['link']);
-			$this->setName($params['list_name']);
-			$this->setOptInDefault($params['opt_in_default']);
-			$this->setSortOrder($params['sort_order']);
-			$this->setUpdated($params['updated']);
+			$this->setContactCount(@$params['contact_count']);
+			$this->setDisplayOnSignup(@$params['display_on_signup']);
+			$this->setId(@$params['id']);
+			$this->setLink(@$params['link']);
+			$this->setName(@$params['list_name']);
+			$this->setOptInDefault(@$params['opt_in_default']);
+			$this->setSortOrder(@$params['sort_order']);
+			$this->setUpdated(@$params['updated']);
 		}
 
 		private $contactCount;
@@ -2394,11 +2392,11 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setLink($params['verified_email_link']);
-			$this->setId($params['verified_email_id']);
-			$this->setEmailAddress($params['verified_email_address']);
-			$this->setStatus($params['verified_email_status']);
-			$this->setVerifiedTime($params['verified_time']);
+			$this->setLink(@$params['verified_email_link']);
+			$this->setId(@$params['verified_email_id']);
+			$this->setEmailAddress(@$params['verified_email_address']);
+			$this->setStatus(@$params['verified_email_status']);
+			$this->setVerifiedTime(@$params['verified_time']);
 
 			return $this;
 		}
@@ -2499,40 +2497,40 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setLink($params['event_link']);
-			$this->setName($params['event_name']);
-			$this->setDescription($params['event_description']);
-			$this->setTitle($params['event_title']);
-			$this->setRegistered($params['registered']);
-			$this->setCreatedDate($params['created_date']);
-			$this->setStatus($params['event_status']);
-			$this->setEventType($params['event_type']);
-			$this->setLocation($params['location']);
-			$this->setAddr1($params['event_addr1']);
-			$this->setAddr2($params['event_addr2']);
-			$this->setAddr3($params['event_addr3']);
-			$this->setCity($params['event_city']);
-			$this->setState($params['event_state']);
-			$this->setCountry($params['event_country']);
-			$this->setPostalCode($params['event_postalcode']);
-			$this->setRegistrationUrl($params['registration_url']);
-			$this->setStartDate($params['event_start']);
-			$this->setEndDate($params['event_end']);
-			$this->setPublishDate($params['event_publishdate']);
-			$this->setWebPage($params['event_webpage']);
-			$this->setAttendedCount($params['attended_count']);
-			$this->setCancelledCount($params['cancelled_count']);
-			$this->setEventFeeRequired($params['event_fee_required']);
-			$this->setCurrencyType($params['currency_type']);
-			$this->setRegistrationLimitDate($params['reg_limit_date']);
-			$this->setRegistrationLimitCount($params['reg_limit_count']);
-			$this->setRegistrationClosedManually($params['reg_closed_manually']);
-			$this->setEarlyFeeDate($params['early_fee_date']);
-			$this->setLateFeeDate($params['late_fee_date']);
-			$this->setGuestLimit($params['guest_limit']);
-			$this->setTicketing($params['ticketing']);
+			$this->setLink(@$params['event_link']);
+			$this->setName(@$params['event_name']);
+			$this->setDescription(@$params['event_description']);
+			$this->setTitle(@$params['event_title']);
+			$this->setRegistered(@$params['registered']);
+			$this->setCreatedDate(@$params['created_date']);
+			$this->setStatus(@$params['event_status']);
+			$this->setEventType(@$params['event_type']);
+			$this->setLocation(@$params['location']);
+			$this->setAddr1(@$params['event_addr1']);
+			$this->setAddr2(@$params['event_addr2']);
+			$this->setAddr3(@$params['event_addr3']);
+			$this->setCity(@$params['event_city']);
+			$this->setState(@$params['event_state']);
+			$this->setCountry(@$params['event_country']);
+			$this->setPostalCode(@$params['event_postalcode']);
+			$this->setRegistrationUrl(@$params['registration_url']);
+			$this->setStartDate(@$params['event_start']);
+			$this->setEndDate(@$params['event_end']);
+			$this->setPublishDate(@$params['event_publishdate']);
+			$this->setWebPage(@$params['event_webpage']);
+			$this->setAttendedCount(@$params['attended_count']);
+			$this->setCancelledCount(@$params['cancelled_count']);
+			$this->setEventFeeRequired(@$params['event_fee_required']);
+			$this->setCurrencyType(@$params['currency_type']);
+			$this->setRegistrationLimitDate(@$params['reg_limit_date']);
+			$this->setRegistrationLimitCount(@$params['reg_limit_count']);
+			$this->setRegistrationClosedManually(@$params['reg_closed_manually']);
+			$this->setEarlyFeeDate(@$params['early_fee_date']);
+			$this->setLateFeeDate(@$params['late_fee_date']);
+			$this->setGuestLimit(@$params['guest_limit']);
+			$this->setTicketing(@$params['ticketing']);
 
-			if ($params['payment_options'])
+			if (@$params['payment_options'])
 			{
 				foreach ($params['payment_options'] as $tmp)
 				{
@@ -2540,7 +2538,7 @@
 				}
 			}
 
-			if ($params['event_fees'])
+			if (@$params['event_fees'])
 			{
 				foreach ($params['event_fees'] as $tmp)
 				{
@@ -2705,46 +2703,46 @@
 		*/
 		public function __construct($params = array())
 		{
-			$this->setLink($params['registrant_link']);
-			$this->setLastName($params['last_name']);
-			$this->setFirstName($params['first_name']);
-			$this->setEmailAddress($params['email_address']);
-			$this->setPersonalLabel($params['personal_label']);
-			$this->setPersonalAddr1($params['personal_addr1']);
-			$this->setPersonalAddr2($params['personal_addr2']);
-			$this->setPersonalAddr3($params['personal_addr3']);
-			$this->setPersonalCity($params['personal_city']);
-			$this->setPersonalState($params['personal_state']);
-			$this->setPersonalPostalCode($params['personal_postalcode']);
-			$this->setPersonalProvince($params['personal_province']);
-			$this->setPersonalCountry($params['personal_country']);
-			$this->setPersonalPhone($params['personal_phone']);
-			$this->setPersonalCellPhone($params['personal_cellphone']);
-			$this->setBusinessLabel($params['business_label']);
-			$this->setBusinessCompany($params['business_company']);
-			$this->setBusinessJobTitle($params['business_jobtitle']);
-			$this->setBusinessDepartment($params['business_department']);
-			$this->setBusinessAddr1($params['business_addr1']);
-			$this->setBusinessAddr2($params['business_addr2']);
-			$this->setBusinessAddr3($params['business_addr3']);
-			$this->setBusinessCity($params['business_city']);
-			$this->setBusinessState($params['business_state']);
-			$this->setBusinessPostalCode($params['business_postalcode']);
-			$this->setBusinessProvince($params['business_province']);
-			$this->setBusinessCountry($params['business_country']);
-			$this->setBusinessPhone($params['business_phone']);
-			$this->setBusinessFax($params['business_fax']);
-			$this->setBusinessWebSite($params['business_website']);
-			$this->setBusinessBlog($params['business_blog']);
-			$this->setRegistrationStatus($params['reg_status']);
-			$this->setRegistrationDate($params['reg_date']);
-			$this->setGuestCount($params['guest_count']);
-			$this->setPaymentStatus($params['payment_status']);
-			$this->setOrderAmount($params['order_amount']);
-			$this->setCurrencyType($params['currency_type']);
-			$this->setPaymentType($params['payment_type']);
+			$this->setLink(@$params['registrant_link']);
+			$this->setLastName(@$params['last_name']);
+			$this->setFirstName(@$params['first_name']);
+			$this->setEmailAddress(@$params['email_address']);
+			$this->setPersonalLabel(@$params['personal_label']);
+			$this->setPersonalAddr1(@$params['personal_addr1']);
+			$this->setPersonalAddr2(@$params['personal_addr2']);
+			$this->setPersonalAddr3(@$params['personal_addr3']);
+			$this->setPersonalCity(@$params['personal_city']);
+			$this->setPersonalState(@$params['personal_state']);
+			$this->setPersonalPostalCode(@$params['personal_postalcode']);
+			$this->setPersonalProvince(@$params['personal_province']);
+			$this->setPersonalCountry(@$params['personal_country']);
+			$this->setPersonalPhone(@$params['personal_phone']);
+			$this->setPersonalCellPhone(@$params['personal_cellphone']);
+			$this->setBusinessLabel(@$params['business_label']);
+			$this->setBusinessCompany(@$params['business_company']);
+			$this->setBusinessJobTitle(@$params['business_jobtitle']);
+			$this->setBusinessDepartment(@$params['business_department']);
+			$this->setBusinessAddr1(@$params['business_addr1']);
+			$this->setBusinessAddr2(@$params['business_addr2']);
+			$this->setBusinessAddr3(@$params['business_addr3']);
+			$this->setBusinessCity(@$params['business_city']);
+			$this->setBusinessState(@$params['business_state']);
+			$this->setBusinessPostalCode(@$params['business_postalcode']);
+			$this->setBusinessProvince(@$params['business_province']);
+			$this->setBusinessCountry(@$params['business_country']);
+			$this->setBusinessPhone(@$params['business_phone']);
+			$this->setBusinessFax(@$params['business_fax']);
+			$this->setBusinessWebSite(@$params['business_website']);
+			$this->setBusinessBlog(@$params['business_blog']);
+			$this->setRegistrationStatus(@$params['reg_status']);
+			$this->setRegistrationDate(@$params['reg_date']);
+			$this->setGuestCount(@$params['guest_count']);
+			$this->setPaymentStatus(@$params['payment_status']);
+			$this->setOrderAmount(@$params['order_amount']);
+			$this->setCurrencyType(@$params['currency_type']);
+			$this->setPaymentType(@$params['payment_type']);
 
-			if ($params['custom_field1'])
+			if (@$params['custom_field1'])
 			{
 				foreach ($params['custom_field1'] as $tmp)
 				{
@@ -2752,7 +2750,7 @@
 				}
 			}
 
-			if ($params['custom_field2'])
+			if (@$params['custom_field2'])
 			{
 				foreach ($params['custom_field2'] as $tmp)
 				{
@@ -2760,7 +2758,7 @@
 				}
 			}
 
-			if ($params['costs'])
+			if (@$params['costs'])
 			{
 				foreach ($params['costs'] as $tmp)
 				{

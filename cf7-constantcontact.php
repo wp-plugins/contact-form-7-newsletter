@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 1.0.4
+Version: 1.1
 */
 
 /*  Copyright 2012 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -38,7 +38,7 @@ class CTCTCF7 {
 		add_action('wpcf7_admin_after_mail_2', array('CTCTCF7', 'show_ctct_metabox' ));
 
 		// CF7 Processing
-		add_action( 'wpcf7_before_send_mail', array('CTCTCF7', 'process_submission' ));
+		add_action( 'wpcf7_mail_sent', array('CTCTCF7', 'process_submission' ));
 	}
 
 	function admin_head() {
@@ -383,62 +383,179 @@ Work Phone: [text work-phone]</pre>
 
 
 	function process_submission($obj) {
+
 		$cf7_ctct = get_option( 'cf7_ctct_'.$obj->id );
+
 		if(empty($cf7_ctct)) { return $obj; }
 
 		$subscribe = true;
 
 		if(empty($cf7_ctct['active']) || empty($cf7_ctct['fields']) || empty($cf7_ctct['lists'])) { return $obj; }
 
-		@self::get_includes();
+		self::get_includes();
 
 		// If it doesn't load for some reason....
-		if(!class_exists('CTCT_SuperClass')) { return; }
+		if(!class_exists('CTCT_SuperClass')) { return $obj; }
 
+		$contact = array();
 		foreach($cf7_ctct['fields'] as $key => $field) {
-			$value = self::tag_replace($field, $obj->posted_data);
-			$contact[$key] = $value;
+			$value = self::get_submitted_value($field, $obj);
+			$contact[$key] = self::process_field($key, $value);
 		}
 
-
+		// If there's a field to opt in, and the opt-in field is empty, return.
 		if(!empty($cf7_ctct['accept'])) {
-			$accept = self::tag_replace($cf7_ctct['accept'], $obj->posted_data );
+			$accept = self::get_submitted_value($cf7_ctct['accept'], $obj );
 			if(empty($accept)) { return $obj; }
+			$action = 'ACTION_BY_CONTACT';
+		} else {
+			// Don't send them a welcome email
+			$action = 'ACTION_BY_CUSTOMER';
 		}
+
+		$contact = self::process_contact($contact);
 
 		// For debug only
-#		$contact['email_address'] = rand(0,10000).$contact['email_address']; // REMOVE!!!!!
-
-		// Define the lists to be added
-		$contact['lists'] = (array)$cf7_ctct['lists'];
-
-		$Contact = CTCT_SuperClass::CC_Contact($contact);
+		#$contact['email_address'] = rand(0,10000).$contact['email_address']; // REMOVE!!!!!
 
 		$contact_exists = CTCT_SuperClass::CC_ContactsCollection()->searchByEmail($contact['email_address']);
 
 		if(!$contact_exists) {
 			$expected_response = 201;
-			$response = CTCT_SuperClass::CC_ContactsCollection()->createContact($Contact);
+
+			$Contact = CTCT_SuperClass::CC_Contact($contact);
+			$ExistingContact = false;
+
+			foreach((array)$cf7_ctct['lists'] as $list) {
+				$Contact->setLists($list);
+			}
+
+			$response = CTCT_SuperClass::CC_ContactsCollection()->createContact($Contact, false);
+
 		} else {
 			$expected_response = 204;
-			$details = $contact_exists[0][0];
-			$contact_id = CTCT_SuperClass::getContactId(&$contact_exists[0][0]);
-			$Contact->setId($contact_exists[0][0]->getId());
-			$Contact->setLink($contact_exists[0][0]->getLink());
-			$response = CTCT_SuperClass::CC_ContactsCollection()->updateContact($contact_id, $Contact);
+
+			$Contact = false;
+			$ExistingContact = CTCT_SuperClass::CC_ContactsCollection()->listContactDetails($contact_exists[0][0]);
+
+			// Update the existing contact with the new data
+			self::mapMergeVars($contact, $ExistingContact);
+
+			// Update Lists
+			$lists = $ExistingContact->getLists();
+
+			foreach((array)$cf7_ctct['lists'] as $list) {
+				$lists[] = 'http://api.constantcontact.com'.$list;
+			}
+
+			$set_lists = array();
+			foreach($lists as $list) {
+				if(!in_array($list, $set_lists)) { $set_lists[] = $list; }
+			}
+
+			foreach($set_lists as $list) {
+				$ExistingContact->setLists($list);
+			}
+
+			$response = CTCT_SuperClass::CC_ContactsCollection()->updateContact($ExistingContact->getId(), $ExistingContact, false);
 		}
 
-		if((int)$response !== $expected_response) {
-			$failed = true;
-			return false;
+		if(floatval($response['info']['http_code']) !== floatval($expected_response)) {
+			do_action('cf7_ctct_failed', $response, $Contact, $ExistingContact);
 		}
 
-		return true;
+		return $obj;
 	}
 
+	public function mapMergeVars($contact, &$ExistingContact) {
+		if(!empty($contact['first_name'])) { $ExistingContact->setFirstName($contact['first_name']); }
+		if(!empty($contact['middle_name'])) { $ExistingContact->setMiddleName($contact['middle_name']); }
+		if(!empty($contact['last_name'])) { $ExistingContact->setLastName($contact['last_name']); }
+		if(!empty($contact['company_name'])) { $ExistingContact->setCompanyName($contact['company_name']); }
+		if(!empty($contact['job_title'])) { $ExistingContact->setJobTitle($contact['job_title']); }
+		if(!empty($contact['home_number'])) { $ExistingContact->setHomeNumber($contact['home_number']); }
+		if(!empty($contact['work_number'])) { $ExistingContact->setWorkNumber($contact['work_number']); }
+		if(!empty($contact['address_line_1'])) { $ExistingContact->setAddr1($contact['address_line_1']); }
+		if(!empty($contact['address_line_2'])) { $ExistingContact->setAddr2($contact['address_line_2']); }
+		if(!empty($contact['address_line_3'])) { $ExistingContact->setAddr3($contact['address_line_3']); }
+		if(!empty($contact['city_name'])) { $ExistingContact->setCity($contact['city_name']); }
+		if(!empty($contact['state_code'])) {
+			$ExistingContact->setStateCode($contact['state_code']);
+			$ExistingContact->setStateName('');
+		}
+		if(!empty($contact['state_name'])) {
+			$ExistingContact->setStateName($contact['state_name']);
+			$ExistingContact->setStateCode('');
+		}
+		if(!empty($contact['country_code'])) { $ExistingContact->setCountryCode($contact['country_code']); }
+		if(!empty($contact['zip_code'])) { $ExistingContact->setPostalCode($contact['zip_code']); }
+		if(!empty($contact['sub_zip_code'])) { $ExistingContact->setSubPostalCode($contact['sub_zip_code']); }
+		if(!empty($contact['notes'])) { $ExistingContact->setNotes($contact['notes']); }
+		if(!empty($contact['custom_field_1'])) { $ExistingContact->setCustomField1($contact['custom_field_1']); }
+		if(!empty($contact['custom_field_2'])) { $ExistingContact->setCustomField2($contact['custom_field_2']); }
+		if(!empty($contact['custom_field_3'])) { $ExistingContact->setCustomField3($contact['custom_field_3']); }
+		if(!empty($contact['custom_field_4'])) { $ExistingContact->setCustomField4($contact['custom_field_4']); }
+		if(!empty($contact['custom_field_5'])) { $ExistingContact->setCustomField5($contact['custom_field_5']); }
+		if(!empty($contact['custom_field_6'])) { $ExistingContact->setCustomField6($contact['custom_field_6']); }
+		if(!empty($contact['custom_field_7'])) { $ExistingContact->setCustomField7($contact['custom_field_7']); }
+		if(!empty($contact['custom_field_8'])) { $ExistingContact->setCustomField8($contact['custom_field_8']); }
+		if(!empty($contact['custom_field_9'])) { $ExistingContact->setCustomField9($contact['custom_field_9']); }
+		if(!empty($contact['custom_field_10'])) { $ExistingContact->setCustomField10($contact['custom_field_10']); }
+		if(!empty($contact['custom_field_11'])) { $ExistingContact->setCustomField11($contact['custom_field_11']); }
+		if(!empty($contact['custom_field_12'])) { $ExistingContact->setCustomField12($contact['custom_field_12']); }
+		if(!empty($contact['custom_field_13'])) { $ExistingContact->setCustomField13($contact['custom_field_13']); }
+		if(!empty($contact['custom_field_14'])) { $ExistingContact->setCustomField14($contact['custom_field_14']); }
+		if(!empty($contact['custom_field_15'])) { $ExistingContact->setCustomField15($contact['custom_field_15']); }
+	}
 
-	function tag_replace($subject, $posted_data, $html = false, $pattern = '/\[\s*([a-zA-Z_][0-9a-zA-Z:._-]*)\s*\]/') {
+	public function process_contact($contact = array()) {
 
+		// Process the full name tag
+		if(!empty($contact['full_name'])) {
+
+			@include_once(plugin_dir_path(__FILE__).'nameparse.php');
+
+			// In case it didn't load for some reason...
+			if(function_exists('cf7_newsletter_parse_name')) {
+
+				$name = cf7_newsletter_parse_name($contact['full_name']);
+
+				if(isset($name['first'])) { $contact['first_name'] = $name['first']; }
+
+				if(isset($name['middle'])) { $contact['middle_name'] = $name['middle']; }
+
+				if(isset($name['last'])) { $contact['last_name'] = $name['last']; }
+
+				unset($contact['full_name']);
+			}
+		}
+
+		return $contact;
+	}
+	/**
+	 * If there are custom cases for a field, process them here.
+	 * @param  string $key   Key from CTCT_SuperClass::listMergeVars()
+	 * @param  string $value Passed value
+	 * @return string        return $value
+	 */
+	function process_field($key, $value) {
+		return $value;
+	}
+
+	/**
+	 * Get the value from the submitted fields
+	 * @param  string  $subject     The name of the field; ie: [first-name]
+	 * @param  array  $posted_data The posted data, in array form.
+	 * @return [type]               [description]
+	 */
+	function get_submitted_value($subject, $obj, $pattern = '/\[\s*([a-zA-Z_][0-9a-zA-Z:._-]*)\s*\]/') {
+
+		if(is_callable(array($obj, 'replace_mail_tags'))) {
+			return $obj->replace_mail_tags($subject);
+		}
+
+		// Keeping below for back compatibility
+		$posted_data = $obj->posted_data;
 		if( preg_match($pattern,$subject,$matches) > 0)
 		{
 

@@ -64,6 +64,13 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 
 == Changelog ==
 
+= 1.1 =
+* Adds support for Contact Form 7 3.3 and newer
+* Lists will now be updated instead of replaced for existing contacts
+* If you don't set an opt-in field, users will no longer receive Welcome to Our Mailing List email.
+* Added new "Full Name" tag that will automatically process a full name field into First, Last, and Middle names
+* Resolved some PHP warnings
+
 = 1.0.4 =
 * Added support for more than 50 contact lists
 * Now displays lists in tidy columns on modern browsers
@@ -89,6 +96,13 @@ In the WordPress administration, navigate to Contact > Constant Contact in the W
 * Liftoff!
 
 == Upgrade Notice ==
+
+= 1.1 =
+* Adds support for Contact Form 7 3.3 and newer
+* Lists will now be updated instead of replaced for existing contacts
+* If you don't set an opt-in field, users will no longer receive Welcome to Our Mailing List email.
+* Added new "Full Name" tag that will automatically process a full name field into First, Last, and Middle names
+* Resolved some PHP warnings
 
 = 1.0.4 =
 * Added support for more than 50 contact lists

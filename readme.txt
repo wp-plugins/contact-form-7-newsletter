@@ -7,13 +7,13 @@ Tested up to: 3.5
 Stable tag: trunk
 License: GPLv2 or later
 
-Easily integrate Constant Contact with the Contact Form 7 plugin.
+Easily integrate email marketing with the Contact Form 7 plugin. When users contact you, they get added to your newsletter!
 
 == Description ==
 
 > __This plugin requires a <a href="http://www.constantcontact.com/index.jsp" title="Sign up for a free Constant Contact trial" rel="nofollow">Constant Contact account</a>.__ <br />*Don't have an account?* Constant Contact offers a <a href="https://www.constantcontact.com/email-marketing/signup.jsp" rel="nofollow">free 60 day trial</a>, so sign up and give this plugin a whirl!
 
-Automatically add contact form submissions to Constant Contact lists that you choose! The plugin settings are configured on a per-form basis on the Contact Form 7 form configuration pages.
+Automatically add contact form submissions to Constant Contact lists that you choose.
 
 ### Get linked with Constant Contact in 60 seconds!
 This plugin is very easy to get set up. The instructions are simple: 
@@ -24,6 +24,9 @@ This plugin is very easy to get set up. The instructions are simple:
 1. Configure the Constant Contact section on the Contact Form 7 "Edit" form page
 
 ...and you're done!
+
+### Have multiple forms? 
+You can configure integrations on a per-form basis. Different Contact Form 7 forms can add users to different Constant Contact lists.
 
 #### Features
 * Add contacts to multiple lists at once

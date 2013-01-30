@@ -11,7 +11,7 @@ Easily integrate email marketing with the Contact Form 7 plugin. When users cont
 
 == Description ==
 
-> __This plugin requires a <a href="http://www.constantcontact.com/index.jsp" title="Sign up for a free Constant Contact trial" rel="nofollow">Constant Contact account</a>.__ <br />*Don't have an account?* Constant Contact offers a <a href="https://www.constantcontact.com/email-marketing/signup.jsp" rel="nofollow">free 60 day trial</a>, so sign up and give this plugin a whirl!
+> __This plugin requires a <a href="http://wordpress.constantcontact.com" title="Sign up for a free Constant Contact trial" rel="nofollow">Constant Contact account</a>.__ <br />*Don't have an account?* Constant Contact offers a <a href="https://wordpress.constantcontact.com/email-marketing/signup.jsp" rel="nofollow">free 60 day trial</a>, so sign up and give this plugin a whirl!
 
 Automatically add contact form submissions to Constant Contact lists that you choose.
 
@@ -44,7 +44,7 @@ You can configure integrations on a per-form basis. Different Contact Form 7 for
 == Frequently Asked Questions ==
 
 = Do I need a Constant Contact account? =
-Yes, this plugin requires a <a href="http://www.constantcontact.com/features/signup.jsp" title="Sign up for Constant Contact" rel="nofollow">Constant Contact account</a>.
+Yes, this plugin requires a <a href="http://wordpress.constantcontact.com/features/signup.jsp" title="Sign up for Constant Contact" rel="nofollow">Constant Contact account</a>.
 
 = Does this plugin allow for an opt-in checkbox =
 

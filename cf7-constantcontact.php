@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 2.0
+Version: 2.0.1
 */
 
 /*  Copyright 2013 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -36,7 +36,7 @@ class CTCTCF7 {
 	 * The current version of the plugin.
 	 * @var string
 	 */
-	private static $version = '2.0';
+	private static $version = '2.0.1';
 
 	function __construct() {
 
@@ -103,9 +103,12 @@ class CTCTCF7 {
 	static function hide_updated_message() {
 		if(isset($_REQUEST['hide-cf7-update']) && current_user_can( 'manage_options' )) {
 			$deleted = delete_option('ctct_cf7_updated');
-			if(isset($_REQUEST['ajax'])) {
-				die(floatval($deleted));
-			}
+
+			// If processing using ajax, we can exit immediately.
+			if(isset($_REQUEST['ajax'])) { die(floatval($deleted)); }
+
+			// Otherwise, it's a plain link, and keep loading.
+			return;
 		}
 	}
 	/**
@@ -226,11 +229,6 @@ class CTCTCF7 {
 
 		jQuery(document).ready(function($) {
 
-			$('.ctctcf7-tooltip').tooltip({
-		        content: function () {
-		            return $(this).prop('title');
-		        }
-		    });
 
 			$('#wpcf7-ctct-active').change(function() {
 				if($(this).is(':checked')) {
@@ -584,7 +582,15 @@ class CTCTCF7 {
 		$cf7_ctct_defaults = array();
 		$cf7_ctct = get_option( 'cf7_ctct_'.$args->id, $cf7_ctct_defaults );
 	?>
-
+	<script>
+		jQuery(document).ready(function() {
+			$('.ctctcf7-tooltip').tooltip({
+		        content: function () {
+		            return $(this).prop('title');
+		        }
+		    });
+		});
+	</script>
 	<div class="ctctcf7-tooltip" title="<h6><?php _e('Backward Compatibility', 'ctctcf7'); ?></h6><p><?php _e('Starting with Version 2.0 of Contact Form 7 Newsletter plugin, the lists a form sends data to should be defined by generating a tag above &uarr;</p><p>For backward compatibility, <strong>if you don\'t define any forms using a tag above</strong>, your form will continue to send contact data to these lists:', 'ctctcf7'); ?></p><ul class='ul-disc'>
 		<?php
 		$lists = CTCT_SuperClass::getAvailableLists();

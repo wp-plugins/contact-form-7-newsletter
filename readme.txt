@@ -81,12 +81,12 @@ function remove_CTCTCF7_presstrends_plugin() {
 
 == Changelog ==
 
-= 2.0 & 2.0.1 =
+= 2.0 & 2.0.1 & 2.0.2 =
 * Brand-new way of integrating with Contact Form 7 forms! You no longer need to copy and paste form fields. Now there's a simple drop-down menu to pick your Integration Fields.
 * Added: When a form is connected to Constant Contact, you will see an icon
 * Improved: Handling shortcode processing in CTCT settings
 * Fixed: Compatibility with multiple plugins using the same Constant Contact scripts
-* 2.0.1: Fixed jQuery error on Forms page
+* 2.0.1 & 2.0.2: Fixed jQuery error on Forms page
 
 = 1.1 =
 * Adds support for Contact Form 7 3.3 and newer
@@ -121,11 +121,12 @@ function remove_CTCTCF7_presstrends_plugin() {
 
 == Upgrade Notice ==
 
-= 2.0 =
+= 2.0 & 2.0.1 & 2.0.2 =
 * Brand-new way of integrating with Contact Form 7 forms! You no longer need to copy and paste form fields. Now there's a simple drop-down menu to pick your Integration Fields.
 * Added: When a form is connected to Constant Contact, you will see an icon
 * Improved: Handling shortcode processing in CTCT settings
 * Fixed: Compatibility with multiple plugins using the same Constant Contact scripts
+* 2.0.1 & 2.0.2: Fixed jQuery error on Forms page
 
 = 1.1 =
 * Adds support for Contact Form 7 3.3 and newer

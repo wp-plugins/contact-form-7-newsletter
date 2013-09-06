@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 2.0.1
+Version: 2.0.2
 */
 
 /*  Copyright 2013 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -36,7 +36,7 @@ class CTCTCF7 {
 	 * The current version of the plugin.
 	 * @var string
 	 */
-	private static $version = '2.0.1';
+	private static $version = '2.0.2';
 
 	function __construct() {
 
@@ -50,6 +50,7 @@ class CTCTCF7 {
 
 		add_action('admin_init', array('CTCTCF7', 'settings_init'));
 		add_action('admin_head', array('CTCTCF7', 'admin_head'));
+
 		add_filter('plugin_action_links', array('CTCTCF7', 'plugins_action_links'), 10, 2 );
 		add_action('admin_menu', array('CTCTCF7', 'admin_menu'));
 		add_action('wpcf7_after_save', array('CTCTCF7', 'save_form_settings'));
@@ -224,7 +225,8 @@ class CTCTCF7 {
 
 		if($plugin_page !== 'wpcf7') { return; }
 
-		?>
+		wp_enqueue_script('jquery-ui-tooltip');
+?>
 		<script type="text/javascript">
 
 		jQuery(document).ready(function($) {
@@ -576,14 +578,12 @@ class CTCTCF7 {
 
 	static function metabox($args) {
 
-		wp_enqueue_script('jquery-ui-tooltip');
-
 		$CTCT_SuperClass = new CTCT_SuperClass;
 		$cf7_ctct_defaults = array();
 		$cf7_ctct = get_option( 'cf7_ctct_'.$args->id, $cf7_ctct_defaults );
 	?>
 	<script>
-		jQuery(document).ready(function() {
+		jQuery(document).ready(function($) {
 			$('.ctctcf7-tooltip').tooltip({
 		        content: function () {
 		            return $(this).prop('title');

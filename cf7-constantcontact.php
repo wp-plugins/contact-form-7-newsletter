@@ -5,7 +5,7 @@ Plugin URI: http://www.katzwebservices.com
 Description: Add the power of Constant Contact to Contact Form 7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
-Version: 2.0.2
+Version: 2.0.3
 */
 
 /*  Copyright 2013 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -449,8 +449,9 @@ class CTCTCF7 {
 	    $api_key	= 'mc9ossbhdx30z6l7x4dnchacxpzhp6e054t4';
 	    $auth		= 'dqdjtmst53jn40a5ocxeqfq0wwzwzfiw5';
 	    $api_base	= 'http://api.presstrends.io/index.php/api/events/track/auth/';
+	    $site_url 		= base64_encode(site_url());
 	    $api_string	= $api_base . $auth . '/api/' . $api_key . '/';
-	    $event_string	= $api_string . 'name/' . urlencode($event_name) . '/';
+	    $event_string	= $api_string . 'name/' . urlencode($event_name) . '/url/' . $site_url . '/';
 	    wp_remote_get( $event_string );
 	}
 

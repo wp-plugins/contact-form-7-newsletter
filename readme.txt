@@ -40,7 +40,7 @@ You can configure integrations on a per-form basis. Different Contact Form 7 for
 1. Go to Contact > Constant Contact menu in the WordPress sidebar
 1. Enter your Constant Contact login information
 1. Configure the Constant Contact section on the Contact Form 7 "Edit" form page
-	- Map the Integration Fields to the form fields available in the drop-down menus.
+1. Map the Integration Fields to the form fields available in the drop-down menus. (see the plugin screenshots)
 
 == Frequently Asked Questions ==
 
@@ -75,9 +75,10 @@ function remove_CTCTCF7_presstrends_plugin() {
 
 == Screenshots ==
 
-1. Constant Contact Module Configuration
-2. On the Form Configuration Page
-3. When a form is connected to Constant Contact, you will see this icon
+1. Configure your Constant Contact settings
+2. Insert a tag that specifies how you would like users to sign up
+3. Map the Contact Form 7 form fields to the Constant Contact fields
+4. When a form is connected to Constant Contact, you will see this icon
 
 == Changelog ==
 

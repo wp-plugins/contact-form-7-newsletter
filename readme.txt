@@ -3,7 +3,7 @@ Contributors: katzwebservices, katzwebdesign
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Constant%20Form%207%20Constant%20Contact%20Module
 Tags: Constant Contact, Contact Form 7, ContactForm7, Contact Form, Newsletter, Opt In, Email Marketing, form, signup, email newsletter form, newsletter form, newsletter signup, email marketing
 Requires at least: 3.2
-Tested up to: 3.6
+Tested up to: 3.6.1
 Stable tag: trunk
 License: GPLv2 or later
 
@@ -82,12 +82,13 @@ function remove_CTCTCF7_presstrends_plugin() {
 
 == Changelog ==
 
-= 2.0 & 2.0.1 & 2.0.2 =
+= 2.0 through 2.0.4 =
 * Brand-new way of integrating with Contact Form 7 forms! You no longer need to copy and paste form fields. Now there's a simple drop-down menu to pick your Integration Fields.
 * Added: When a form is connected to Constant Contact, you will see an icon
 * Improved: Handling shortcode processing in CTCT settings
 * Fixed: Compatibility with multiple plugins using the same Constant Contact scripts
-* 2.0.1 & 2.0.2: Fixed jQuery error on Forms page
+* 2.0.1 - 2.0.3: Fixed jQuery error on Forms page
+* 2.0.4: Added installation instructions and rating box
 
 = 1.1 =
 * Adds support for Contact Form 7 3.3 and newer
@@ -122,12 +123,13 @@ function remove_CTCTCF7_presstrends_plugin() {
 
 == Upgrade Notice ==
 
-= 2.0 & 2.0.1 & 2.0.2 =
+= 2.0 through 2.0.4 =
 * Brand-new way of integrating with Contact Form 7 forms! You no longer need to copy and paste form fields. Now there's a simple drop-down menu to pick your Integration Fields.
 * Added: When a form is connected to Constant Contact, you will see an icon
 * Improved: Handling shortcode processing in CTCT settings
 * Fixed: Compatibility with multiple plugins using the same Constant Contact scripts
-* 2.0.1 & 2.0.2: Fixed jQuery error on Forms page
+* 2.0.1 - 2.0.3: Fixed jQuery error on Forms page
+* 2.0.4: Added installation instructions and rating box
 
 = 1.1 =
 * Adds support for Contact Form 7 3.3 and newer
